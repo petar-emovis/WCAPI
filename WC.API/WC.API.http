@@ -1,0 +1,6 @@
+@WC.API_HostAddress = http://localhost:5171
+
+GET {{WC.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,16 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/WC.API/.vs
+/WC.API/obj
+/WC.API/bin/Debug/net8.0
+/WC.API.DataAccess/bin/Debug/net8.0
+/WC.API.DataAccess/obj
+/WC.API.DataAccess.Bundle/bin/Debug/net8.0
+/WC.API.DataAccess.Bundle/obj
+/WC.API.DataAccess.SqlServer/bin/Debug/net8.0
+/WC.API.DataAccess.SqlServer/obj
+/WC.API.Models/obj
+/WC.API.Models/bin/Debug/net8.0

@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/DataAccess/">
+    <Project Path="../WC.API.DataAccess.Bundle/WC.DataAccess.Bundle.csproj" Id="7acd6ea3-5636-40af-b8bc-b59050a2ec3c" />
+    <Project Path="../WC.API.DataAccess.SqlServer/WC.DataAccess.SqlServer.csproj" Id="14c62f32-fd71-4ebc-9dd8-2e56e4a5a403" />
+    <Project Path="../WC.API.DataAccess/WC.DataAccess.csproj" Id="9a871f6f-cfc1-4af1-82c8-4d5af76b12cf" />
+  </Folder>
+  <Folder Name="/Models/">
+    <Project Path="../WC.API.Models/WC.Models.csproj" Id="0f27d28d-b717-42e1-aa9d-b7c7c5ef5bb6" />
+  </Folder>
+  <Folder Name="/Services/" />
+  <Project Path="WC.API.csproj" />
+</Solution>
