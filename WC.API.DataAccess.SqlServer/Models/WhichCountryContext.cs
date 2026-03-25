@@ -45,8 +45,6 @@ public partial class WhichCountryContext : DbContext
 
         modelBuilder.Entity<IpRange>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_IpRange_Info");
-
             entity.ToTable("IpRange");
 
             entity.Property(e => e.Active).HasDefaultValue(true);
@@ -57,9 +55,6 @@ public partial class WhichCountryContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.EndIpBinary).HasMaxLength(16);
-            entity.Property(e => e.IpVersion)
-                .HasMaxLength(10)
-                .IsUnicode(false);
             entity.Property(e => e.StartIp)
                 .HasMaxLength(100)
                 .IsUnicode(false);
@@ -71,7 +66,7 @@ public partial class WhichCountryContext : DbContext
             entity.HasOne(d => d.Country).WithMany(p => p.IpRanges)
                 .HasForeignKey(d => d.CountryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_IpRange_To_Country");
+                .HasConstraintName("FK_IpRangeCountry");
         });
 
         OnModelCreatingPartial(modelBuilder);

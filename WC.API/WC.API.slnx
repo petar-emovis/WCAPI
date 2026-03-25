@@ -7,6 +7,8 @@
   <Folder Name="/Models/">
     <Project Path="../WC.API.Models/WC.Models.csproj" Id="0f27d28d-b717-42e1-aa9d-b7c7c5ef5bb6" />
   </Folder>
-  <Folder Name="/Services/" />
+  <Folder Name="/Services/">
+    <Project Path="../WC.Service/WC.Service.csproj" Id="e01035e7-2bd6-4543-be5c-a2a266a5c3f3" />
+  </Folder>
   <Project Path="WC.API.csproj" />
 </Solution>

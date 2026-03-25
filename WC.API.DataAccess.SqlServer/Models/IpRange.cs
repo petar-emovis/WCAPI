@@ -11,7 +11,7 @@ public partial class IpRange
 
     public int CountryId { get; set; }
 
-    public string IpVersion { get; set; }
+    public int? IpVersion { get; set; }
 
     public string StartIp { get; set; }
 

@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WC.API.DataAccess.SqlServer\WC.DataAccess.SqlServer.csproj" />
+    <ProjectReference Include="..\WC.API.DataAccess\WC.DataAccess.csproj" />
     <ProjectReference Include="..\WC.API.Models\WC.Models.csproj" />
   </ItemGroup>
 

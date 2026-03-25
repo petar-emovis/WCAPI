@@ -7,7 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.23">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.23" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WC.API.DataAccess.Bundle\WC.DataAccess.Bundle.csproj" />
+    <ProjectReference Include="..\WC.API.DataAccess.SqlServer\WC.DataAccess.SqlServer.csproj" />
+    <ProjectReference Include="..\WC.API.Models\WC.Models.csproj" />
+    <ProjectReference Include="..\WC.Service\WC.Service.csproj" />
   </ItemGroup>
 
 </Project>
