@@ -31,5 +31,13 @@ public partial class IpRange
 
     public DateTime UpdateDate { get; set; }
 
+    public long? StartIpv6High { get; set; }
+
+    public long? StartIpv6Low { get; set; }
+
+    public long? EndIpv6High { get; set; }
+
+    public long? EndIpv6Low { get; set; }
+
     public virtual Country Country { get; set; }
 }

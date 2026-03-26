@@ -66,7 +66,39 @@ namespace WC.DataAccess.SqlServer
             return "Initial refresh done! " + a.ToString();
         }
 
-        public async Task<DTO.CountryResponse> GetCountryFromIpAdress(string ipAddress)
+        public async Task<string> RefreshIPv6HighsAndLows()
+        {
+            var ipRanges = await _dbContext.IpRanges
+                .Where(i=> i.IpVersion == (int)IpVersionEnum.IPv6
+                && (i.StartIpv6High == null ||
+                i.StartIpv6Low == null ||
+                i.EndIpv6High == null ||
+                i.EndIpv6Low == null))
+                .ToListAsync();
+
+            Parallel.ForEach(ipRanges, range =>
+            {
+                if (IPAddress.TryParse(range.StartIp, out var startIp))
+                {
+                    var (high, low) = HelperMethods.ToSqlOrderableParts(startIp);
+                    range.StartIpv6High = high;
+                    range.StartIpv6Low = low;
+                }
+
+                if (IPAddress.TryParse(range.EndIp, out var endIp))
+                {
+                    var (high, low) = HelperMethods.ToSqlOrderableParts(endIp);
+                    range.EndIpv6High = high;
+                    range.EndIpv6Low = low;
+                }
+            });
+
+            int a = await _dbContext.SaveChangesAsync();
+
+            return "IPv6 refresh done! " + a.ToString();
+        }
+
+        public async Task<DTO.CountryResponse> GetCountryFromIpAdress(string ipAddress, CancellationToken cancellationToken = default)
         {
             CountryResponse response = new DTO.CountryResponse();
             IPAddress ip = IPAddress.Parse(ipAddress);
@@ -74,25 +106,9 @@ namespace WC.DataAccess.SqlServer
             if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
             {
                 //IPv4
+                long ipv4Value = HelperMethods.IpToLong(ip);
 
-                long ipLong = HelperMethods.IpToLong(ip);
-
-               // var res1 = await _dbContext.IpRanges
-               //.AsNoTracking()
-               //.Where(i => i.IpVersion == (int)IpVersionEnum.IPv4).ToListAsync();
-
-               // var res2 = await _dbContext.IpRanges
-               //.AsNoTracking()
-               //.Where(i => i.IpVersion == (int)IpVersionEnum.IPv4
-               //&& i.StartIpNumeric <= ipLong
-               //&& i.EndIpNumeric >= ipLong).ToListAsync();
-
-                var res = await _dbContext.IpRanges
-                .AsNoTracking()
-                .Include(x => x.Country)
-                .Where(i => i.IpVersion == (int)IpVersionEnum.IPv4
-                && i.StartIpNumeric <= ipLong
-                && i.EndIpNumeric >= ipLong).FirstOrDefaultAsync();
+                var res = await FindByIpv4Async(ipv4Value, cancellationToken);
 
                 if (res != null)
                     response = new CountryResponse { CountryName = res.Country.Name };
@@ -101,24 +117,19 @@ namespace WC.DataAccess.SqlServer
             else //if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
             {
                 //IPv6
+                //BYTE VERSION
 
-                byte[] ipInBytes = ip.GetAddressBytes();
+                //byte[] ipInBytes = ip.GetAddressBytes();
 
-                //var res = await _dbContext.IpRanges
-                //.AsNoTracking()
-                //.Include(x => x.Country)
-                //.Where(i => i.IpVersion == (int)IpVersionEnum.IPv6
-                //&& i.StartIpBinary != null
-                //&& i.EndIpBinary != null
-                //&& HelperMethods.IsInRangeIpv6(ipInBytes, i.StartIpBinary,i.EndIpBinary)).FirstOrDefaultAsync();
+                //var ipv6List = await _dbContext.IpRanges
+                //        .AsNoTracking()
+                //        .Include(x => x.Country)
+                //        .Where(i => i.IpVersion == (int)IpVersionEnum.IPv6).ToListAsync();
 
-                var ipv6List = await _dbContext.IpRanges
-                        .AsNoTracking()
-                        .Include(x => x.Country)
-                        .Where(i => i.IpVersion == (int)IpVersionEnum.IPv6).ToListAsync();
+                //var res = ipv6List.Where(ip => HelperMethods.IsInRangeIpv6(ipInBytes, ip.StartIpBinary, ip.EndIpBinary)).FirstOrDefault();
 
-                var res = ipv6List.Where(ip => HelperMethods.IsInRangeIpv6(ipInBytes, ip.StartIpBinary, ip.EndIpBinary)).FirstOrDefault();
-
+                var (ipv6High, ipv6Low) = HelperMethods.ToSqlOrderableParts(ip);
+                var res = await FindByIpv6Async(ipv6High, ipv6Low, cancellationToken);
 
                 if (res != null)
                     response = new CountryResponse { CountryName = res.Country.Name };
@@ -126,5 +137,38 @@ namespace WC.DataAccess.SqlServer
 
             return response;
         }
+
+        private async Task<Entities.IpRange?> FindByIpv4Async(long ipv4Value, CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.IpRanges
+                    .AsNoTracking()
+                    .Include(x => x.Country)
+                    .Where(i => i.Active
+                        && i.IpVersion == (int)IpVersionEnum.IPv4
+                        && i.StartIpNumeric <= ipv4Value
+                        && i.EndIpNumeric >= ipv4Value)
+                    .OrderByDescending(i => i.StartIpNumeric)
+                    .FirstOrDefaultAsync(cancellationToken);
+        }
+        private async Task<Entities.IpRange?> FindByIpv6Async(long ipv6High, long ipv6Low, CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.IpRanges
+                .AsNoTracking()
+                .Include(x => x.Country)
+                .Where(i => i.Active
+                    && i.IpVersion == (int)IpVersionEnum.IPv6
+                    && (
+                        i.StartIpv6High < ipv6High
+                        || (i.StartIpv6High == ipv6High && i.StartIpv6Low <= ipv6Low)
+                    )
+                    && (
+                        i.EndIpv6High > ipv6High
+                        || (i.EndIpv6High == ipv6High && i.EndIpv6Low >= ipv6Low)
+                    ))
+                .OrderByDescending(i => i.StartIpv6High)
+                .ThenByDescending(i => i.StartIpv6Low)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
     }
 }

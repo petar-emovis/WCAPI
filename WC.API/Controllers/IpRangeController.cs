@@ -7,7 +7,7 @@ using WC.Service;
 namespace WC.API.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("[controller]")]
     public class IpRangeController : Controller
     {
         private readonly ILogger<IpRangeController> _logger;
@@ -25,14 +25,21 @@ namespace WC.API.Controllers
         //    return View();
         //}
 
-        [HttpGet("RefreshIp")]
+        //[HttpGet("RefreshIp")]
+        [HttpGet("[action]")]
         public async Task<string> RefreshIpIntegersBinariesAndVersions()
         {
             return await _wcManagementService.RefreshIpIntegersBinariesAndVersions();
         }
 
-        
-        [HttpGet("GetCountry/{ipAddress}")]
+        [HttpGet("[action]")]
+        public async Task<string> RefreshIPv6HighsAndLows()
+        {
+            return await _wcManagementService.RefreshIPv6HighsAndLows();
+        }
+
+        //[HttpGet("GetCountry/{ipAddress}")]
+        [HttpGet("[action]")]
         public async Task<CountryResponse> GetCountry(string ipAddress)
         {
             return await _wcManagementService.GetCountryFromIpAdress(new IpRangeRequest { IpAddress = ipAddress });

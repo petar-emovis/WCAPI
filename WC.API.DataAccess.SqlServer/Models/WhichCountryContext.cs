@@ -47,6 +47,10 @@ public partial class WhichCountryContext : DbContext
         {
             entity.ToTable("IpRange");
 
+            entity.HasIndex(e => e.StartIpNumeric, "IX_IpRange_IPv4_Active_StartIpNumeric").HasFilter("([IpVersion]=(4) AND [Active]=(1))");
+
+            entity.HasIndex(e => new { e.StartIpv6High, e.StartIpv6Low }, "IX_IpRange_IPv6_Active_Start").HasFilter("([IpVersion]=(6) AND [Active]=(1))");
+
             entity.Property(e => e.Active).HasDefaultValue(true);
             entity.Property(e => e.CreationDate)
                 .HasDefaultValueSql("(getdate())")

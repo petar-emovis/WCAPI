@@ -10,6 +10,7 @@ namespace WC.Service
     public interface IWcManagementService
     {
         Task<string> RefreshIpIntegersBinariesAndVersions();
+        Task<string> RefreshIPv6HighsAndLows();
         Task<CountryResponse> GetCountryFromIpAdress(IpRangeRequest ipAddress);
     }
 }

@@ -19,22 +19,15 @@ namespace WC.Service
         {
             return await _dataAccess.RefreshIpIntegersBinariesAndVersions();
         }
+        public async Task<string> RefreshIPv6HighsAndLows()
+        {
+            return await _dataAccess.RefreshIPv6HighsAndLows();
+        }
 
         public async Task<CountryResponse> GetCountryFromIpAdress(IpRangeRequest ipAddress)
         {
             //VALIDATE ipAdress
             var ip = IpParser.Parse(ipAddress.IpAddress);
-
-            //if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-            //{
-            //    //IPv4
-
-            //}
-            //else if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-            //{
-            //    //IPv6
-
-            //}
 
             var result = await _dataAccess.GetCountryFromIpAdress(ipAddress.IpAddress);
 
