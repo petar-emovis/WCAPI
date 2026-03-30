@@ -14,3 +14,7 @@
 /WC.API.DataAccess.SqlServer/obj
 /WC.API.Models/obj
 /WC.API.Models/bin/Debug/net8.0
+/WC.Service/bin/Debug/net8.0
+/WC.Service/obj
+/WC.Admin/obj
+/WC.Admin/bin/Debug/net8.0

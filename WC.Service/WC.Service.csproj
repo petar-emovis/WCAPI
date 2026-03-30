@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WC.API.DataAccess.SqlServer\WC.DataAccess.SqlServer.csproj" />
+    <ProjectReference Include="..\WC.API.DataAccess\WC.DataAccess.csproj" />
+    <ProjectReference Include="..\WC.API.Models\WC.Models.csproj" />
+  </ItemGroup>
+
+</Project>

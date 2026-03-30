@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WC.API.Models\WC.Models.csproj" />
+  </ItemGroup>
+
 </Project>

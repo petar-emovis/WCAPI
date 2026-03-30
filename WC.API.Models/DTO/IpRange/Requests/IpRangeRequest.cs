@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WC.DataAccess.SqlServer.Context
+namespace WC.Models.DTO
 {
-    public class WC_DbContext 
+    public class IpRangeRequest
     {
+        public string IpAddress { get; set; }
     }
 }

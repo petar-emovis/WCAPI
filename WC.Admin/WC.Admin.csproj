@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WC.API.DataAccess.Bundle\WC.DataAccess.Bundle.csproj" />
+    <ProjectReference Include="..\WC.API.Models\WC.Models.csproj" />
+    <ProjectReference Include="..\WC.Service\WC.Service.csproj" />
+  </ItemGroup>
+
+</Project>

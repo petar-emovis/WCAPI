@@ -6,7 +6,7 @@ namespace WC.DataAccess.Bundle
 {
     public static class WcServiceCollectionExtension
     {
-        public static void AddSeDataAccess(this IServiceCollection services)
+        public static void AddWcDataAccess(this IServiceCollection services)
         {
             services.AddSingleton<IWcDataAccessConfiguration, WcDataAccessConfiguration>();
 
