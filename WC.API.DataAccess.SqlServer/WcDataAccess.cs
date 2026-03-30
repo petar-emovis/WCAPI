@@ -1,9 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
+using System.Net.Sockets;
 using WC.DataAccess.SqlServer.Configuration;
 using WC.DataAccess.SqlServer.Helpers;
+using WC.DataAccess.SqlServer.Map;
 using WC.DataAccess.SqlServer.Models;
 using WC.Models;
+using WC.Models.Admin;
+using WC.Models.Admin.Country;
+using WC.Models.Admin.Dashboard;
 using WC.Models.DTO;
 using DTO = WC.Models.DTO;
 using Entities = WC.DataAccess.SqlServer.Models;
@@ -98,6 +104,7 @@ namespace WC.DataAccess.SqlServer
             return "IPv6 refresh done! " + a.ToString();
         }
 
+        #region Get Country from Ip Address
         public async Task<DTO.CountryResponse> GetCountryFromIpAdress(string ipAddress, CancellationToken cancellationToken = default)
         {
             CountryResponse response = new DTO.CountryResponse();
@@ -169,6 +176,155 @@ namespace WC.DataAccess.SqlServer
                 .ThenByDescending(i => i.StartIpv6Low)
                 .FirstOrDefaultAsync(cancellationToken);
         }
+        #endregion
 
+
+        public IQueryable<DTO.IpRange> IpRangesAsNoTrackingWithCountryAsQueryable()
+        {
+            //var lista = _dbContext.IpRanges
+            //    .AsNoTracking()
+            //    .Include(x => x.Country)
+            //    .AsQueryable();
+
+            var lista = _dbContext.IpRanges
+                .AsNoTracking()
+                .ProjectTo<DTO.IpRange>(WC_Map.Mapper.ConfigurationProvider);
+
+
+            return lista;
+        }
+
+        public async Task<IpRangeEditModel?> GetIpRangeByIdAsync(int id)
+        {
+            return await _dbContext.IpRanges
+                .AsNoTracking()
+                .Where(x => x.Id == id)
+                .Select(x => new IpRangeEditModel
+                {
+                    Id = x.Id,
+                    CountryId = x.CountryId,
+                    IpVersion = x.IpVersion ?? 0,
+                    StartIp = x.StartIp ?? string.Empty,
+                    EndIp = x.EndIp ?? string.Empty,
+                    Active = x.Active
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<CountryDropdownModel>> GetCountriesAsync()
+        {
+            return await _dbContext.Countries
+                .AsNoTracking()
+                .OrderBy(x => x.Name)
+                .Select(x => new CountryDropdownModel
+                {
+                    Id = x.Id,
+                    Name = x.Name + " (" + x.CountryCodeIso2 + ")"
+                })
+                .ToListAsync();
+        }
+
+        public async Task CreateIpRangeAsync(DTO.IpRange model)
+        {
+            var entity = new Entities.IpRange();
+            //MapAndNormalize(entity, model);
+            entity = WC_Map.Mapper.Map<Entities.IpRange>(model);
+
+            _dbContext.IpRanges.Add(entity);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateIpRangeAsync(DTO.IpRange model)
+        {
+            var entity = await _dbContext.IpRanges.FirstOrDefaultAsync(x => x.Id == model.Id);
+
+            if (entity == null)
+                throw new InvalidOperationException("IP range not found.");
+
+            entity = WC_Map.Mapper.Map<Entities.IpRange>(model);
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteIpRangeAsync(int id)
+        {
+            var entity = await _dbContext.IpRanges.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (entity == null)
+                return;
+
+            _dbContext.IpRanges.Remove(entity);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<int> GetTotalCountriesAsync()
+        {
+            return await _dbContext.Countries.CountAsync();
+        }
+        public async Task<int> GetTotalIpRangesAsync()
+        {
+            return await _dbContext.IpRanges.CountAsync();
+        }
+        public async Task<int> GetActiveIpRangesAsync()
+        {
+            return await _dbContext.IpRanges.CountAsync(x => x.Active);
+        }
+        public async Task<int> GetIpv4RangesAsync()
+        {
+            return await _dbContext.IpRanges.CountAsync(x => x.IpVersion == (int)IpVersionEnum.IPv4);
+        }
+        public async Task<int> GetIpv6RangesAsync()
+        {
+            return await _dbContext.IpRanges.CountAsync(x => x.IpVersion == (int)IpVersionEnum.IPv6);
+        }
+
+        public IQueryable<DTO.Country> CountriesAsNoTrackingAsQueryable()
+        {
+            //var query = _dbContext.Countries
+            //    .AsNoTracking()
+            //    .AsQueryable();
+
+            var lista = _dbContext.Countries
+                .AsNoTracking()
+                .ProjectTo<DTO.Country>(WC_Map.Mapper.ConfigurationProvider);
+
+
+            return lista;
+        }
+
+        public async Task<List<CountryListItemModel>> GetCountryListAsync(IQueryable<DTO.Country> query)
+        {
+           return await query
+                .OrderBy(x => x.Name)
+                .Select(x => new CountryListItemModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Iso2Code = x.CountryCodeIso2,
+                    Iso3Code = x.CountryCodeIso3,
+                    IpRangeCount = _dbContext.IpRanges.Count(r => r.CountryId == x.Id),
+                    ActiveIpRangeCount = _dbContext.IpRanges.Count(r => r.CountryId == x.Id && r.Active)
+                })
+                .ToListAsync();
+        }
+
+        public async Task<DTO.Country?> GetCountryByCountryCodeAsync(string countryCode)
+        {
+            return await _dbContext.Countries
+                .ProjectTo<DTO.Country>(WC_Map.Mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(x => x.CountryCodeIso2 == countryCode);
+                
+        }
+
+        public async Task<int> AddIpRangesAsync(List<DTO.IpRange> ipRanges)
+        {
+            foreach (var dtoModel in ipRanges)
+            {
+                Entities.IpRange entity = new Entities.IpRange();
+                _dbContext.IpRanges.Add(WC_Map.Mapper.Map(dtoModel, entity));
+            }
+
+            return await _dbContext.SaveChangesAsync();
+        }
     }
 }

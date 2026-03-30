@@ -24,6 +24,7 @@ namespace WC.DataAccess.SqlServer.Helpers
 
             return 0;
         }
+
         public static int CompareIpv6(byte[] left, byte[] right)
         {
             if (left == null) throw new ArgumentNullException(nameof(left));

@@ -21,6 +21,13 @@
         public byte[] EndIpBinary { get; set; }
 
         public bool Active { get; set; }
+        public long? StartIpv6High { get; set; }
+
+        public long? StartIpv6Low { get; set; }
+
+        public long? EndIpv6High { get; set; }
+
+        public long? EndIpv6Low { get; set; }
 
         public DateTime CreationDate { get; set; }
 

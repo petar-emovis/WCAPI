@@ -1,0 +1,181 @@
+﻿@using WC.Models
+@model WC.Models.Admin.IpRange.IpRangePagedResultModel
+
+@{
+    ViewData["Title"] = "IP Ranges";
+}
+
+<h1 class="mb-4">IP Ranges</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-3">
+        <input name="search" value="@Model.Search" class="form-control" placeholder="Search IP or country" />
+    </div>
+
+    <div class="col-md-2">
+        <select name="ipVersion" class="form-select">
+            <option value="">All versions</option>
+
+            <option value="@((int)IpVersionEnum.IPv4)"
+                    selected="@(Model.IpVersion == (int)IpVersionEnum.IPv4)">
+                IPv4
+            </option>
+
+            <option value="@((int)IpVersionEnum.IPv6)"
+                    selected="@(Model.IpVersion == (int)IpVersionEnum.IPv6)">
+                IPv6
+            </option>
+@*             @if (Model.IpVersion == (int)IpVersionEnum.IPv4)
+            {
+                <option value="@((int)IpVersionEnum.IPv4)" selected>IPv4</option>
+            }
+            else
+            {
+                <option value="@((int)IpVersionEnum.IPv4)">IPv4</option>
+            }
+
+            @if (Model.IpVersion == (int)IpVersionEnum.IPv6)
+            {
+                <option value="@((int)IpVersionEnum.IPv6)" selected>IPv6</option>
+            }
+            else
+            {
+                <option value="@((int)IpVersionEnum.IPv6)">IPv6</option>
+            } *@
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="pageSize" class="form-select">
+            @foreach (var size in new[] { 25, 50, 100, 200 })
+            {
+                if (Model.PageSize == size)
+                {
+                    <option value="@size" selected>@size per page</option>
+                }
+                else
+                {
+                    <option value="@size">@size per page</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="col-md-2 form-check ms-2 mt-2">
+        <input type="checkbox" class="form-check-input" id="activeOnly" name="activeOnly" value="true" @(Model.ActiveOnly ? "checked" : "") />
+        <label class="form-check-label" for="activeOnly">Active only</label>
+    </div>
+
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a asp-action="Index" class="btn btn-secondary">Reset</a>
+    </div>
+</form>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Create New</a>
+</p>
+
+<div class="mb-2">
+    Showing <strong>@Model.Items.Count</strong> of <strong>@Model.TotalCount</strong> records.
+</div>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Country</th>
+            <th>Code</th>
+            <th>IP Version</th>
+            <th>Start IP</th>
+            <th>End IP</th>
+            <th>Active</th>
+            <th style="width: 160px;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Items.Any())
+        {
+            foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.CountryName</td>
+                    <td>@item.CountryCodeIso2</td>
+                    <td>@item.IpVersion</td>
+                    <td>@item.StartIp</td>
+                    <td>@item.EndIp</td>
+                    <td>@item.Active</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" class="text-center text-muted">No IP ranges found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+
+            <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(Model.Page - 1)"
+                       asp-route-pageSize="@Model.PageSize"
+                       asp-route-search="@Model.Search"
+                       asp-route-ipVersion="@Model.IpVersion"
+                       asp-route-countryId="@Model.CountryId"
+                       asp-route-activeOnly="@Model.ActiveOnly">
+                    Previous
+                </a>
+            </li>
+
+            @{
+                int startPage = Math.Max(1, Model.Page - 2);
+                int endPage = Math.Min(Model.TotalPages, Model.Page + 2);
+            }
+
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == Model.Page ? "active" : "")">
+                    <a class="page-link"
+                           asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-pageSize="@Model.PageSize"
+                           asp-route-search="@Model.Search"
+                           asp-route-ipVersion="@Model.IpVersion"
+                           asp-route-countryId="@Model.CountryId"
+                           asp-route-activeOnly="@Model.ActiveOnly">
+                        @i
+                    </a>
+                </li>
+            }
+
+            <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : "")">
+                <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(Model.Page + 1)"
+                       asp-route-pageSize="@Model.PageSize"
+                       asp-route-search="@Model.Search"
+                       asp-route-ipVersion="@Model.IpVersion"
+                       asp-route-countryId="@Model.CountryId"
+                       asp-route-activeOnly="@Model.ActiveOnly">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

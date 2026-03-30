@@ -1,0 +1,41 @@
+﻿@model WC.Models.Admin.IpRangeEditPageViewModel
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <input asp-for="Id" type="hidden" />
+
+    <div class="mb-3">
+        <label asp-for="CountryId" class="form-label"></label>
+        <select asp-for="CountryId" asp-items="Model.CountryOptions" class="form-select">
+            <option value="">-- Select country --</option>
+        </select>
+        <span asp-validation-for="CountryId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="IpVersion" class="form-label"></label>
+        <select asp-for="IpVersion" asp-items="Model.IpVersionOptions" class="form-select"></select>
+        <span asp-validation-for="IpVersion" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="StartIp" class="form-label"></label>
+        <input asp-for="StartIp" class="form-control" />
+        <span asp-validation-for="StartIp" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EndIp" class="form-label"></label>
+        <input asp-for="EndIp" class="form-control" />
+        <span asp-validation-for="EndIp" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="Active" class="form-check-input" />
+        <label asp-for="Active" class="form-check-label"></label>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

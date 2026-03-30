@@ -1,0 +1,51 @@
+﻿@model List<WC.Models.Admin.Country.CountryListItemModel>
+
+@{
+    ViewData["Title"] = "Countries";
+    var search = Context.Request.Query["search"].ToString();
+}
+
+<h1 class="mb-4">Countries</h1>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input name="search" value="@search" class="form-control" placeholder="Search by country name or code" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a asp-action="Index" class="btn btn-secondary">Reset</a>
+    </div>
+</form>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>ISO2</th>
+            <th>ISO3</th>
+            <th>Total IP Ranges</th>
+            <th>Active IP Ranges</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Iso2Code</td>
+                    <td>@item.Iso3Code</td>
+                    <td>@item.IpRangeCount</td>
+                    <td>@item.ActiveIpRangeCount</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">No countries found.</td>
+            </tr>
+        }
+    </tbody>
+</table>

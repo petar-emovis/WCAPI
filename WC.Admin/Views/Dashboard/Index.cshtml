@@ -1,0 +1,70 @@
+﻿@model WC.Models.Admin.Dashboard.DashboardSummaryModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Countries</h5>
+                <p class="display-6">@Model.TotalCountries</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Total IP Ranges</h5>
+                <p class="display-6">@Model.TotalIpRanges</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Active IP Ranges</h5>
+                <p class="display-6">@Model.ActiveIpRanges</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">IPv4 Ranges</h5>
+                <p class="display-6">@Model.IPv4Ranges</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">IPv6 Ranges</h5>
+                <p class="display-6">@Model.IPv6Ranges</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+        <h5 class="card-title">Last Import</h5>
+
+        @if (Model.LastImportDate.HasValue)
+        {
+            <p>Date: @Model.LastImportDate.Value.ToString("yyyy-MM-dd HH:mm")</p>
+            <p>Status: @Model.LastImportStatus</p>
+        }
+        else
+        {
+            <p class="text-muted">No import history available yet.</p>
+        }
+    </div>
+</div>

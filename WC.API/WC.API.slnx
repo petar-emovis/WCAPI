@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Admin/">
+    <Project Path="../WC.Admin/WC.Admin.csproj" Id="9b1d0a1c-da9c-4da9-8fe3-8780460ef724" />
+  </Folder>
   <Folder Name="/DataAccess/">
     <Project Path="../WC.API.DataAccess.Bundle/WC.DataAccess.Bundle.csproj" Id="7acd6ea3-5636-40af-b8bc-b59050a2ec3c" />
     <Project Path="../WC.API.DataAccess.SqlServer/WC.DataAccess.SqlServer.csproj" Id="14c62f32-fd71-4ebc-9dd8-2e56e4a5a403" />
