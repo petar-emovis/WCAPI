@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using WC.Models;
 using WC.Models.Admin;
 using WC.Service;
 
@@ -45,7 +46,7 @@ namespace WC.Admin.Controllers
             var vm = await BuildViewModelAsync(new IpRangeEditPageViewModel
             {
                 Active = true,
-                IpVersion = 4
+                IpVersion = (int)IpVersionEnum.IPv4
             });
 
             return View(vm);
@@ -167,8 +168,8 @@ namespace WC.Admin.Controllers
 
             vm.IpVersionOptions = new List<SelectListItem>
             {
-                new("IPv4", "4"),
-                new("IPv6", "6")
+                new("IPv4", ((int)IpVersionEnum.IPv4).ToString()),
+                new("IPv6", ((int)IpVersionEnum.IPv6).ToString())
             };
 
             return vm;

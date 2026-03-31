@@ -1,9 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using WC.DataAccess;
-using WC.DataAccess.SqlServer.Helpers;
 using WC.Models;
 using WC.Models.Admin;
 using WC.Models.Admin.Country;
@@ -11,6 +9,7 @@ using WC.Models.Admin.Dashboard;
 using WC.Models.Admin.Import;
 using WC.Models.Admin.IpRange;
 using WC.Models.DTO;
+using WC.Models.Helpers;
 using WC.Service.Helper;
 
 namespace WC.Service
@@ -47,74 +46,11 @@ namespace WC.Service
 
         public async Task<IpRangePagedResultModel> GetIpRangesAsync(IpRangeFilterModel filter)
         {
-            if(filter.Page <= 0)
-                filter.Page = 1;
+            //MsSqlResult 
+            return await _dataAccess.GetIpRangesAsync(filter);
+            //var PostGreSqlREsult = _dataAccess.GetIpv4RangesAsync(filter);
 
-            if (filter.PageSize <= 0)
-                filter.PageSize = 50;
-
-            if (filter.PageSize > 200)
-                filter.PageSize = 200;
-
-            var query = _dataAccess.IpRangesAsNoTrackingWithCountryAsQueryable();
-
-            if (filter.CountryId.HasValue)
-                query = query.Where(x => x.CountryId == filter.CountryId.Value);
-
-            if (filter.IpVersion.HasValue)
-                query = query.Where(x => (int?)x.IpVersion == filter.IpVersion.Value);
-
-            if (filter.ActiveOnly)
-                query = query.Where(x => x.Active);
-
-            if (!string.IsNullOrWhiteSpace(filter.Search))
-            {
-                var search = filter.Search.Trim();
-
-                query = query.Where(x =>
-                    (x.StartIp != null && x.StartIp.Contains(search)) ||
-                    (x.EndIp != null && x.EndIp.Contains(search)) ||
-                    (x.Country.Name != null && x.Country.Name.Contains(search)) ||
-                    (x.Country.CountryCodeIso2 != null && x.Country.CountryCodeIso2.Contains(search)) ||
-                    (x.Country.CountryCodeIso3 != null && x.Country.CountryCodeIso3.Contains(search)));
-            }
-
-            var totalCount = await query.CountAsync();
-
-            //return await query
-            var items =  await query
-                .OrderBy(x => x.Country.Name)
-                //.ThenBy(x => x.StartIp) // Ovo jako USPORAVA!
-                //.ThenBy(x => x.IpVersion)
-                //.ThenBy(x => x.StartIpNumeric)
-                //.ThenBy(x => x.StartIpv6High)
-                //.ThenBy(x => x.StartIpv6Low)
-                .Skip((filter.PageSize - 1) * filter.PageSize)
-                .Take(filter.PageSize)
-                .Select(x => new IpRangeListItemModel
-                {
-                    Id = x.Id,
-                    CountryId = x.CountryId,
-                    CountryName = x.Country.Name,
-                    CountryCodeIso2 = x.Country.CountryCodeIso2,
-                    IpVersion = x.IpVersion != null ? (int)x.IpVersion : 0,
-                    StartIp = x.StartIp ?? string.Empty,
-                    EndIp = x.EndIp ?? string.Empty,
-                    Active = x.Active
-                })
-                .ToListAsync();
-
-            return new IpRangePagedResultModel
-            {
-                Items = items,
-                Page = filter.Page,
-                PageSize = filter.PageSize,
-                TotalCount = totalCount,
-                CountryId = filter.CountryId,
-                IpVersion = filter.IpVersion,
-                ActiveOnly = filter.ActiveOnly,
-                Search = filter.Search
-            };
+            ////BOLJE Premapirat modele
         }
 
         public async Task<IpRangeEditModel?> GetIpRangeByIdAsync(int id)
@@ -317,6 +253,7 @@ namespace WC.Service
         #region Methods
         private static void MapAndNormalize(IpRange dtoModel, IpRangeEditModel editModel)
         {
+            dtoModel.Id = editModel.Id;
             dtoModel.CountryId = editModel.CountryId;
             dtoModel.IpVersion = (IpVersionEnum)editModel.IpVersion;
             dtoModel.StartIp = editModel.StartIp.Trim();

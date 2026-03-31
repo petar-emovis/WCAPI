@@ -11,7 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddWcDataAccess();
 builder.Services.AddLogging();
-builder.Services.AddSingleton<IWcManagementService, WcManagementService>();
+//builder.Services.AddSingleton<IWcManagementService, WcManagementService>();
+builder.Services.AddScoped<IWcManagementService, WcManagementService>();
 
 var app = builder.Build();
 
