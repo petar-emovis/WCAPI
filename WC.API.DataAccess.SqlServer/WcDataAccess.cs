@@ -278,6 +278,7 @@ namespace WC.DataAccess.SqlServer
                 {
                     Id = x.Id,
                     CountryId = x.CountryId,
+                    CountryName = x.Country.Name,
                     IpVersion = x.IpVersion ?? 0,
                     StartIp = x.StartIp ?? string.Empty,
                     EndIp = x.EndIp ?? string.Empty,
@@ -329,7 +330,8 @@ namespace WC.DataAccess.SqlServer
             if (entity == null)
                 return;
 
-            _dbContext.IpRanges.Remove(entity);
+            entity.Active = false;
+            //_dbContext.IpRanges.Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
 

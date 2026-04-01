@@ -33,10 +33,6 @@ namespace WC.Admin.Controllers
                 PageSize = pageSize
             });
 
-            //ViewBag.CountryId = countryId;
-            //ViewBag.IpVersion = ipVersion;
-            //ViewBag.ActiveOnly = activeOnly;
-
             return View(model);
         }
 
@@ -96,6 +92,7 @@ namespace WC.Admin.Controllers
             {
                 Id = data.Id,
                 CountryId = data.CountryId,
+                CountryName = data.CountryName,
                 IpVersion = data.IpVersion,
                 StartIp = data.StartIp,
                 EndIp = data.EndIp,
@@ -146,7 +143,18 @@ namespace WC.Admin.Controllers
             if (data == null)
                 return NotFound();
 
-            return View(data);
+            var vm = await BuildViewModelAsync(new IpRangeEditPageViewModel
+            {
+                Id = data.Id,
+                CountryId = data.CountryId,
+                CountryName = data.CountryName,
+                IpVersion = data.IpVersion,
+                StartIp = data.StartIp,
+                EndIp = data.EndIp,
+                Active = data.Active
+            });
+
+            return View(vm);
         }
 
         [HttpPost]

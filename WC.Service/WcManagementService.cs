@@ -217,6 +217,7 @@ namespace WC.Service
                     MapAndNormalize(model, new IpRangeEditModel
                     {
                         CountryId = country.Id,
+                        CountryName = country.Name,
                         IpVersion = ipVersion,
                         StartIp = startIp,
                         EndIp = endIp,
