@@ -7,16 +7,26 @@ namespace WC.Models.Admin
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please  select Country")]
         public int CountryId { get; set; }
+        
+        public string? CountryName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please  select IpVersion")]
         public int IpVersion { get; set; }
+        
+        public string IpVersionString
+        {
+            get
+            {
+                return ((IpVersionEnum)IpVersion).ToString();
+            }
+        }
 
-        [Required]
+        [Required(ErrorMessage = "Please  select StartIp")]
         public string StartIp { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Please  select EndIp")]
         public string EndIp { get; set; } = string.Empty;
 
         public bool Active { get; set; } = true;

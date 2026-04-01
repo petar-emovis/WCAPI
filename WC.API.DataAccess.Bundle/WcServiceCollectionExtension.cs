@@ -10,7 +10,8 @@ namespace WC.DataAccess.Bundle
         {
             services.AddSingleton<IWcDataAccessConfiguration, WcDataAccessConfiguration>();
 
-            services.AddSingleton<IWcDataAccess, WcDataAccess>();
+            //services.AddSingleton<IWcDataAccess, WcDataAccess>();
+            services.AddScoped<IWcDataAccess, WcDataAccess>();
         }
     }
 }

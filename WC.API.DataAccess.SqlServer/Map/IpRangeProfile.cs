@@ -19,6 +19,14 @@ namespace WC.DataAccess.SqlServer.Map
 
             CreateMap<DTO.IpRangeRequest, Entities.IpRange>();
 
+            CreateMap<DTO.IpRange, Entities.IpRange>()
+                 .ForMember
+                (
+                    dest => dest.IpVersion,
+                    map => map.MapFrom(src => (int)src.IpVersion)
+                )
+                .ForAllMembers(o => o.Condition((src, dest, member) => src != null));
+
             //CreateMap<DTO.UpdateIpRangeRequest, Entities.IpRange>()
             //    .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }

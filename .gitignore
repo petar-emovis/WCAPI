@@ -18,3 +18,5 @@
 /WC.Service/obj
 /WC.Admin/obj
 /WC.Admin/bin/Debug/net8.0
+/WC.DbUpdater/obj
+/WC.DbUpdater/bin/Debug/net8.0

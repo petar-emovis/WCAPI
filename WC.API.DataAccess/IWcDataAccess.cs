@@ -1,5 +1,6 @@
 ﻿using WC.Models.Admin;
 using WC.Models.Admin.Country;
+using WC.Models.Admin.IpRange;
 using WC.Models.DTO;
 using DTO = WC.Models.DTO;
 
@@ -12,6 +13,7 @@ namespace WC.DataAccess
         Task<DTO.CountryResponse> GetCountryFromIpAdress(string ipAddress, CancellationToken cancellationToken = default);
 
         IQueryable<DTO.IpRange> IpRangesAsNoTrackingWithCountryAsQueryable();
+        Task<IpRangePagedResultModel> GetIpRangesAsync(IpRangeFilterModel filter);
         Task<IpRangeEditModel?> GetIpRangeByIdAsync(int id);
         Task<List<CountryDropdownModel>> GetCountriesAsync();
 

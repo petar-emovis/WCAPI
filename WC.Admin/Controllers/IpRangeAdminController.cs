@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using WC.Models;
 using WC.Models.Admin;
 using WC.Service;
 
@@ -32,10 +33,6 @@ namespace WC.Admin.Controllers
                 PageSize = pageSize
             });
 
-            //ViewBag.CountryId = countryId;
-            //ViewBag.IpVersion = ipVersion;
-            //ViewBag.ActiveOnly = activeOnly;
-
             return View(model);
         }
 
@@ -45,7 +42,7 @@ namespace WC.Admin.Controllers
             var vm = await BuildViewModelAsync(new IpRangeEditPageViewModel
             {
                 Active = true,
-                IpVersion = 4
+                IpVersion = (int)IpVersionEnum.IPv4
             });
 
             return View(vm);
@@ -95,6 +92,7 @@ namespace WC.Admin.Controllers
             {
                 Id = data.Id,
                 CountryId = data.CountryId,
+                CountryName = data.CountryName,
                 IpVersion = data.IpVersion,
                 StartIp = data.StartIp,
                 EndIp = data.EndIp,
@@ -145,7 +143,18 @@ namespace WC.Admin.Controllers
             if (data == null)
                 return NotFound();
 
-            return View(data);
+            var vm = await BuildViewModelAsync(new IpRangeEditPageViewModel
+            {
+                Id = data.Id,
+                CountryId = data.CountryId,
+                CountryName = data.CountryName,
+                IpVersion = data.IpVersion,
+                StartIp = data.StartIp,
+                EndIp = data.EndIp,
+                Active = data.Active
+            });
+
+            return View(vm);
         }
 
         [HttpPost]
@@ -167,8 +176,8 @@ namespace WC.Admin.Controllers
 
             vm.IpVersionOptions = new List<SelectListItem>
             {
-                new("IPv4", "4"),
-                new("IPv6", "6")
+                new("IPv4", ((int)IpVersionEnum.IPv4).ToString()),
+                new("IPv6", ((int)IpVersionEnum.IPv6).ToString())
             };
 
             return vm;
