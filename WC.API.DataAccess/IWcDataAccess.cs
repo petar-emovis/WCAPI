@@ -14,8 +14,8 @@ namespace WC.DataAccess
 
         IQueryable<DTO.IpRange> IpRangesAsNoTrackingWithCountryAsQueryable();
         Task<IpRangePagedResultModel> GetIpRangesAsync(IpRangeFilterModel filter);
-        Task<IpRangeEditModel?> GetIpRangeByIdAsync(int id);
-        Task<List<CountryDropdownModel>> GetCountriesAsync();
+        Task<IpRangeViewModel?> GetIpRangeByIdAsync(int id);
+        Task<List<CountryViewModel>> GetCountriesAsync();
 
         Task CreateIpRangeAsync(DTO.IpRange model);
         Task UpdateIpRangeAsync(DTO.IpRange model);
@@ -27,7 +27,7 @@ namespace WC.DataAccess
         Task<int> GetIpv4RangesAsync();
         Task<int> GetIpv6RangesAsync();
         IQueryable<DTO.Country> CountriesAsNoTrackingAsQueryable();
-        Task<List<CountryListItemModel>> GetCountryListAsync(IQueryable<DTO.Country> query);
+        Task<List<CountryViewModel>> GetCountryListAsync(IQueryable<DTO.Country> query);
         Task<DTO.Country?> GetCountryByCountryCodeAsync(string countryCode);
         Task<int> AddIpRangesAsync(List<DTO.IpRange> ipRanges);
 

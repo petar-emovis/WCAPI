@@ -8,7 +8,7 @@ namespace WC.Models.Admin.IpRange
 {
     public class IpRangePagedResultModel
     {
-        public List<IpRangeListItemModel> Items { get; set; } = new();
+        public List<IpRangeViewModel> Items { get; set; } = new();
 
         public int Page { get; set; }
         public int PageSize { get; set; }

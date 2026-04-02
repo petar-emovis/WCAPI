@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WC.Models.Admin.Dashboard
 {
-    public class DashboardSummaryModel
+    public class DashboardViewModel
     {
         public int TotalCountries { get; set; }
         public int TotalIpRanges { get; set; }

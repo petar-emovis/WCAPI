@@ -20,14 +20,14 @@ namespace WC.Service
 
 
         Task<IpRangePagedResultModel> GetIpRangesAsync(IpRangeFilterModel filter);
-        Task<IpRangeEditModel?> GetIpRangeByIdAsync(int id);
-        Task<List<CountryDropdownModel>> GetCountriesAsync();
-        Task CreateIpRangeAsync(IpRangeEditModel model);
-        Task UpdateIpRangeAsync(IpRangeEditModel model);
+        Task<IpRangeViewModel?> GetIpRangeByIdAsync(int id);
+        Task<List<CountryViewModel>> GetCountriesAsync();
+        Task CreateIpRangeAsync(IpRangeViewModel model);
+        Task UpdateIpRangeAsync(IpRangeViewModel model);
         Task DeleteIpRangeAsync(int id);
 
-        Task<DashboardSummaryModel> GetDashboardSummaryAsync();
-        Task<List<CountryListItemModel>> GetCountryListAsync(string? search = null);
+        Task<DashboardViewModel> GetDashboardSummaryAsync();
+        Task<List<CountryViewModel>> GetCountryListAsync(string? search = null);
 
         Task<ImportResultModel> ImportIpRangesAsync(Stream stream, string fileName);
     }
