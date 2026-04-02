@@ -37,7 +37,8 @@ namespace WC.Service
         public async Task<CountryResponse> GetCountryFromIpAdress(IpRangeRequest ipAddress)
         {
             //VALIDATE ipAdress
-            var ip = IpParser.Parse(ipAddress.IpAddress);
+            if (!IPAddress.TryParse(ipAddress.IpAddress, out var ip))
+                throw new InvalidOperationException("IP address is invalid.");
 
             var result = await _dataAccess.GetCountryFromIpAdress(ipAddress.IpAddress);
 
@@ -53,17 +54,17 @@ namespace WC.Service
             ////BOLJE Premapirat modele
         }
 
-        public async Task<IpRangeEditModel?> GetIpRangeByIdAsync(int id)
+        public async Task<IpRangeViewModel?> GetIpRangeByIdAsync(int id)
         {
             return await _dataAccess.GetIpRangeByIdAsync(id);
         }
 
-        public async Task<List<CountryDropdownModel>> GetCountriesAsync()
+        public async Task<List<CountryViewModel>> GetCountriesAsync()
         {
             return await _dataAccess.GetCountriesAsync();
         }
 
-        public async Task CreateIpRangeAsync(IpRangeEditModel editModel)
+        public async Task CreateIpRangeAsync(IpRangeViewModel editModel)
         {
             var dtoModel = new IpRange();
             MapAndNormalize(dtoModel, editModel);
@@ -71,7 +72,7 @@ namespace WC.Service
             await _dataAccess.CreateIpRangeAsync(dtoModel);
         }
 
-        public async Task UpdateIpRangeAsync(IpRangeEditModel editModel)
+        public async Task UpdateIpRangeAsync(IpRangeViewModel editModel)
         {
             var dtoModel = new IpRange();
             //var entity = await _dataAccess.IpRanges.FirstOrDefaultAsync(x => x.Id == model.Id);
@@ -95,7 +96,7 @@ namespace WC.Service
             await _dataAccess.DeleteIpRangeAsync(id);
         }
 
-        public async Task<DashboardSummaryModel> GetDashboardSummaryAsync()
+        public async Task<DashboardViewModel> GetDashboardSummaryAsync()
         {
 
             var totalCountries = await _dataAccess.GetTotalCountriesAsync();
@@ -104,7 +105,7 @@ namespace WC.Service
             var ipv4Ranges = await _dataAccess.GetIpv4RangesAsync();
             var ipv6Ranges = await _dataAccess.GetIpv6RangesAsync();
 
-            return new DashboardSummaryModel
+            return new DashboardViewModel
             {
                 TotalCountries = totalCountries,
                 TotalIpRanges = totalIpRanges,
@@ -118,7 +119,7 @@ namespace WC.Service
             };
         }
 
-        public async Task<List<CountryListItemModel>> GetCountryListAsync(string? search = null)
+        public async Task<List<CountryViewModel>> GetCountryListAsync(string? search = null)
         {
             //var query = _dataAccess.Countries
             //    .AsNoTracking()
@@ -131,9 +132,9 @@ namespace WC.Service
                 search = search.Trim();
 
                 query = query.Where(x =>
-                    x.Name.Contains(search) ||
-                    x.CountryCodeIso2.Contains(search) ||
-                    x.CountryCodeIso3.Contains(search));
+                    (!string.IsNullOrEmpty(x.Name) && x.Name.Contains(search)) ||
+                    (!string.IsNullOrEmpty(x.CountryCodeIso2) && x.CountryCodeIso2.Contains(search)) ||
+                    (!string.IsNullOrEmpty(x.CountryCodeIso3) && x.CountryCodeIso3.Contains(search)));
             }
 
             //return await query
@@ -161,7 +162,7 @@ namespace WC.Service
 
             using var reader = new StreamReader(stream, Encoding.UTF8, leaveOpen: false);
 
-            bool isHeader = true;
+            //bool isHeader = true;
 
             List<IpRange> ipRanges = new List<IpRange>();
 
@@ -172,32 +173,31 @@ namespace WC.Service
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
 
-                if (isHeader)
-                {
-                    isHeader = false;
-                    continue;
-                }
+                //if (isHeader)
+                //{
+                //    isHeader = false;
+                //    continue;
+                //}
 
                 processed++;
 
                 var parts = line.Split(',');
 
-                if (parts.Length < 4)
+                if (parts.Length < 3)
                 {
                     skipped++;
                     continue;
                 }
 
-                string countryCode = parts[0].Trim();
-                string ipVersionText = parts[1].Trim();
-                string startIp = parts[2].Trim();
-                string endIp = parts[3].Trim();
+                string startIp = parts[0].Trim();
+                string endIp = parts[1].Trim();
+                string countryCode = parts[2].Trim();
 
-                if (!int.TryParse(ipVersionText, out int ipVersion))
-                {
-                    skipped++;
-                    continue;
-                }
+                //if (!int.TryParse(ipVersionText, out int ipVersion))
+                //{
+                //    skipped++;
+                //    continue;
+                //}
 
                 //var country = await _dataAccess.Countries
                 //    .FirstOrDefaultAsync(x => x.Iso2Code == countryCode);
@@ -209,12 +209,43 @@ namespace WC.Service
                     continue;
                 }
 
+                int ipVersion = 0;
+                int ipVersionEnd = 0;
+                if (IPAddress.TryParse(startIp, out var ip))
+                {
+                    ipVersion = (ip.AddressFamily == AddressFamily.InterNetwork) ? (int)IpVersionEnum.IPv4 : (int)IpVersionEnum.IPv6;
+                }
+                else
+                {
+                    skipped++;
+                    continue;
+                }
+                
+                if (IPAddress.TryParse(endIp, out ip))
+                {
+                    ipVersionEnd = (ip.AddressFamily == AddressFamily.InterNetwork) ? (int)IpVersionEnum.IPv4 : (int)IpVersionEnum.IPv6;
+                }
+                else
+                {
+                    skipped++;
+                    continue;
+                }
+
+                if (ipVersion != ipVersionEnd)
+                {
+                    //STARTIP i END IP SU RAZLIČITI, POGREŠAN JE REDAK
+                    skipped++;
+                    continue;
+                }
+
+                //DODAT VALIDACIJU ZA DUPLIKATE
+
                 try
                 {
                     //var entity = new WC.DataAccess.SqlServer.Models.IpRange();
                     var model = new IpRange();
 
-                    MapAndNormalize(model, new IpRangeEditModel
+                    MapAndNormalize(model, new IpRangeViewModel
                     {
                         CountryId = country.Id,
                         CountryName = country.Name,
@@ -252,7 +283,7 @@ namespace WC.Service
         #endregion
 
         #region Methods
-        private static void MapAndNormalize(IpRange dtoModel, IpRangeEditModel editModel)
+        private static void MapAndNormalize(IpRange dtoModel, IpRangeViewModel editModel)
         {
             dtoModel.Id = editModel.Id;
             dtoModel.CountryId = editModel.CountryId;

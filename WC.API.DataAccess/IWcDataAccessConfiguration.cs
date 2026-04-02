@@ -8,7 +8,7 @@ namespace WC.DataAccess
 {
     public interface IWcDataAccessConfiguration
     {
-        public string ConnectionString { get; }
+        public string? ConnectionString { get; }
 
         public int? Timeout { get; }
     }

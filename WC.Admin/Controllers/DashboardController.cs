@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WC.Admin.Models.Dashboard;
+using WC.Models.Admin.Dashboard;
 using WC.Service;
 
 namespace WC.Admin.Controllers

@@ -39,7 +39,7 @@ namespace WC.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var vm = await BuildViewModelAsync(new IpRangeEditPageViewModel
+            var vm = await BuildViewModelAsync(new IpRangeEditModel
             {
                 Active = true,
                 IpVersion = (int)IpVersionEnum.IPv4
@@ -50,7 +50,7 @@ namespace WC.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(IpRangeEditPageViewModel vm)
+        public async Task<IActionResult> Create(IpRangeEditModel vm)
         {
             if (!ModelState.IsValid)
             {
@@ -60,7 +60,7 @@ namespace WC.Admin.Controllers
 
             try
             {
-                await _wcManagementService.CreateIpRangeAsync(new IpRangeEditModel
+                await _wcManagementService.CreateIpRangeAsync(new IpRangeViewModel
                 {
                     CountryId = vm.CountryId,
                     IpVersion = vm.IpVersion,
@@ -88,7 +88,7 @@ namespace WC.Admin.Controllers
             if (data == null)
                 return NotFound();
 
-            var vm = await BuildViewModelAsync(new IpRangeEditPageViewModel
+            var vm = await BuildViewModelAsync(new IpRangeEditModel
             {
                 Id = data.Id,
                 CountryId = data.CountryId,
@@ -104,7 +104,7 @@ namespace WC.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(IpRangeEditPageViewModel vm)
+        public async Task<IActionResult> Edit(IpRangeEditModel vm)
         {
             if (!ModelState.IsValid)
             {
@@ -114,7 +114,7 @@ namespace WC.Admin.Controllers
 
             try
             {
-                await _wcManagementService.UpdateIpRangeAsync(new IpRangeEditModel
+                await _wcManagementService.UpdateIpRangeAsync(new IpRangeViewModel
                 {
                     Id = vm.Id,
                     CountryId = vm.CountryId,
@@ -143,7 +143,7 @@ namespace WC.Admin.Controllers
             if (data == null)
                 return NotFound();
 
-            var vm = await BuildViewModelAsync(new IpRangeEditPageViewModel
+            var vm = await BuildViewModelAsync(new IpRangeEditModel
             {
                 Id = data.Id,
                 CountryId = data.CountryId,
@@ -166,7 +166,7 @@ namespace WC.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<IpRangeEditPageViewModel> BuildViewModelAsync(IpRangeEditPageViewModel vm)
+        private async Task<IpRangeEditModel> BuildViewModelAsync(IpRangeEditModel vm)
         {
             var countries = await _wcManagementService.GetCountriesAsync();
 

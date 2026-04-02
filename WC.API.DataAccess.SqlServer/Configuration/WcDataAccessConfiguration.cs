@@ -6,7 +6,7 @@ namespace WC.DataAccess.SqlServer.Configuration
 {
     public class WcDataAccessConfiguration : IWcDataAccessConfiguration
     {
-        public string ConnectionString { get; set; }
+        public string? ConnectionString { get; set; }
 
         public int? Timeout { get; set; }
 

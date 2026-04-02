@@ -8,6 +8,6 @@ namespace WC.Models.DTO
 {
     public class IpRangeRequest
     {
-        public string IpAddress { get; set; }
+        public string? IpAddress { get; set; }
     }
 }

@@ -4,13 +4,13 @@
     {
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public string CountryCodeIso2 { get; set; }
+        public string? CountryCodeIso2 { get; set; }
 
-        public string CountryCodeIso3 { get; set; }
+        public string? CountryCodeIso3 { get; set; }
 
-        public string CountryCodeNumerical { get; set; }
+        public string? CountryCodeNumerical { get; set; }
 
         public DateTime CreationDate { get; set; }
 

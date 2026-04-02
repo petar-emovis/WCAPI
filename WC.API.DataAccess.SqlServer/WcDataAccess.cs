@@ -243,12 +243,14 @@ namespace WC.DataAccess.SqlServer
                 //.ThenBy(x => x.StartIpv6Low)
                 .Skip((filter.Page - 1) * filter.Page)
                 .Take(filter.PageSize)
-                .Select(x => new IpRangeListItemModel
+                .Select(x => new IpRangeViewModel
                 {
                     Id = x.Id,
                     CountryId = x.CountryId,
                     CountryName = x.Country.Name,
                     CountryCodeIso2 = x.Country.CountryCodeIso2,
+                    //CountryName = x.Country != null ? x.Country.Name : string.Empty,
+                    //CountryCodeIso2 = x.Country != null ? x.Country.CountryCodeIso2 : string.Empty,
                     IpVersion = x.IpVersion != null ? (int)x.IpVersion : 0,
                     StartIp = x.StartIp ?? string.Empty,
                     EndIp = x.EndIp ?? string.Empty,
@@ -269,12 +271,12 @@ namespace WC.DataAccess.SqlServer
             };
         }
 
-        public async Task<IpRangeEditModel?> GetIpRangeByIdAsync(int id)
+        public async Task<IpRangeViewModel?> GetIpRangeByIdAsync(int id)
         {
             return await _dbContext.IpRanges
                 .AsNoTracking()
                 .Where(x => x.Id == id)
-                .Select(x => new IpRangeEditModel
+                .Select(x => new IpRangeViewModel
                 {
                     Id = x.Id,
                     CountryId = x.CountryId,
@@ -287,12 +289,12 @@ namespace WC.DataAccess.SqlServer
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<List<CountryDropdownModel>> GetCountriesAsync()
+        public async Task<List<CountryViewModel>> GetCountriesAsync()
         {
             return await _dbContext.Countries
                 .AsNoTracking()
                 .OrderBy(x => x.Name)
-                .Select(x => new CountryDropdownModel
+                .Select(x => new CountryViewModel
                 {
                     Id = x.Id,
                     Name = x.Name + " (" + x.CountryCodeIso2 + ")"
@@ -370,11 +372,11 @@ namespace WC.DataAccess.SqlServer
             return lista;
         }
 
-        public async Task<List<CountryListItemModel>> GetCountryListAsync(IQueryable<DTO.Country> query)
+        public async Task<List<CountryViewModel>> GetCountryListAsync(IQueryable<DTO.Country> query)
         {
            return await query
                 .OrderBy(x => x.Name)
-                .Select(x => new CountryListItemModel
+                .Select(x => new CountryViewModel
                 {
                     Id = x.Id,
                     Name = x.Name,

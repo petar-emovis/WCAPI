@@ -13,8 +13,10 @@ namespace WC.DataAccess.SqlServer.Map
                 .ForMember
                 (
                     dest => dest.IpVersion,
-                    map => map.MapFrom(src => (IpVersionEnum)src.IpVersion)
-                )
+                    map => map.MapFrom(src => src.IpVersion.HasValue
+                                        ? (IpVersionEnum)src.IpVersion.Value
+                                        : (IpVersionEnum?)null)
+                                            )
                 .ForAllMembers(o => o.Condition((src, dest, member) => src != null));
 
             CreateMap<DTO.IpRangeRequest, Entities.IpRange>();
@@ -23,7 +25,9 @@ namespace WC.DataAccess.SqlServer.Map
                  .ForMember
                 (
                     dest => dest.IpVersion,
-                    map => map.MapFrom(src => (int)src.IpVersion)
+                    map => map.MapFrom(src => src.IpVersion.HasValue 
+                                        ? (int?)src.IpVersion
+                                        : (int?)null)
                 )
                 .ForAllMembers(o => o.Condition((src, dest, member) => src != null));
 
