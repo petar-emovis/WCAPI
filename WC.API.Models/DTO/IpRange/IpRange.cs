@@ -33,6 +33,6 @@
 
         public DateTime UpdateDate { get; set; }
 
-        public Country Country { get; set; } = new Country();
+        public Country Country { get; set; } = null!;
     }
 }

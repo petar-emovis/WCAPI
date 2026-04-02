@@ -247,8 +247,10 @@ namespace WC.DataAccess.SqlServer
                 {
                     Id = x.Id,
                     CountryId = x.CountryId,
-                    CountryName = x.Country != null ? x.Country.Name : string.Empty,
-                    CountryCodeIso2 = x.Country != null ? x.Country.CountryCodeIso2 : string.Empty,
+                    CountryName = x.Country.Name,
+                    CountryCodeIso2 = x.Country.CountryCodeIso2,
+                    //CountryName = x.Country != null ? x.Country.Name : string.Empty,
+                    //CountryCodeIso2 = x.Country != null ? x.Country.CountryCodeIso2 : string.Empty,
                     IpVersion = x.IpVersion != null ? (int)x.IpVersion : 0,
                     StartIp = x.StartIp ?? string.Empty,
                     EndIp = x.EndIp ?? string.Empty,

@@ -162,7 +162,7 @@ namespace WC.Service
 
             using var reader = new StreamReader(stream, Encoding.UTF8, leaveOpen: false);
 
-            bool isHeader = true;
+            //bool isHeader = true;
 
             List<IpRange> ipRanges = new List<IpRange>();
 
@@ -173,32 +173,31 @@ namespace WC.Service
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
 
-                if (isHeader)
-                {
-                    isHeader = false;
-                    continue;
-                }
+                //if (isHeader)
+                //{
+                //    isHeader = false;
+                //    continue;
+                //}
 
                 processed++;
 
                 var parts = line.Split(',');
 
-                if (parts.Length < 4)
+                if (parts.Length < 3)
                 {
                     skipped++;
                     continue;
                 }
 
-                string countryCode = parts[0].Trim();
-                string ipVersionText = parts[1].Trim();
-                string startIp = parts[2].Trim();
-                string endIp = parts[3].Trim();
+                string startIp = parts[0].Trim();
+                string endIp = parts[1].Trim();
+                string countryCode = parts[2].Trim();
 
-                if (!int.TryParse(ipVersionText, out int ipVersion))
-                {
-                    skipped++;
-                    continue;
-                }
+                //if (!int.TryParse(ipVersionText, out int ipVersion))
+                //{
+                //    skipped++;
+                //    continue;
+                //}
 
                 //var country = await _dataAccess.Countries
                 //    .FirstOrDefaultAsync(x => x.Iso2Code == countryCode);
@@ -209,6 +208,37 @@ namespace WC.Service
                     skipped++;
                     continue;
                 }
+
+                int ipVersion = 0;
+                int ipVersionEnd = 0;
+                if (IPAddress.TryParse(startIp, out var ip))
+                {
+                    ipVersion = (ip.AddressFamily == AddressFamily.InterNetwork) ? (int)IpVersionEnum.IPv4 : (int)IpVersionEnum.IPv6;
+                }
+                else
+                {
+                    skipped++;
+                    continue;
+                }
+                
+                if (IPAddress.TryParse(endIp, out ip))
+                {
+                    ipVersionEnd = (ip.AddressFamily == AddressFamily.InterNetwork) ? (int)IpVersionEnum.IPv4 : (int)IpVersionEnum.IPv6;
+                }
+                else
+                {
+                    skipped++;
+                    continue;
+                }
+
+                if (ipVersion != ipVersionEnd)
+                {
+                    //STARTIP i END IP SU RAZLIČITI, POGREŠAN JE REDAK
+                    skipped++;
+                    continue;
+                }
+
+                //DODAT VALIDACIJU ZA DUPLIKATE
 
                 try
                 {
