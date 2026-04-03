@@ -20,3 +20,5 @@
 /WC.Admin/bin/Debug/net8.0
 /WC.DbUpdater/obj
 /WC.DbUpdater/bin/Debug/net8.0
+/WC.DbConfig/bin/Debug/net8.0-windows
+/WC.DbConfig/obj

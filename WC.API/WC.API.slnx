@@ -13,6 +13,6 @@
   <Folder Name="/Services/">
     <Project Path="../WC.Service/WC.Service.csproj" Id="e01035e7-2bd6-4543-be5c-a2a266a5c3f3" />
   </Folder>
-  <Project Path="../WC.DbUpdater/WC.DbUpdater.csproj" Id="1b73ef26-61b4-47c9-b261-b0fd4afe9eb1" />
+  <Project Path="../WC.DbConfig/WC.DbConfig.csproj" Id="62d140bb-3f71-4bfb-88a4-a0e4ce91e4be" />
   <Project Path="WC.API.csproj" />
 </Solution>
