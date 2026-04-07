@@ -1,4 +1,5 @@
 
+
 IF NOT EXISTS(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Country]') AND type in (N'U'))
 BEGIN	
 	CREATE TABLE [dbo].[Country]

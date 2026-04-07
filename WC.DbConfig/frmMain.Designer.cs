@@ -33,11 +33,17 @@
             btnTestConnection = new Button();
             lblTestIcon = new Label();
             lblTestInfo = new Label();
+            pnlContent = new Panel();
+            btnUpgrade = new Button();
+            label1 = new Label();
+            cbxUpgrade = new ComboBox();
+            pnlLoading = new Panel();
+            pnlContent.SuspendLayout();
             SuspendLayout();
             // 
             // txtConnectionString
             // 
-            txtConnectionString.Location = new Point(12, 32);
+            txtConnectionString.Location = new Point(10, 31);
             txtConnectionString.Name = "txtConnectionString";
             txtConnectionString.Size = new Size(371, 23);
             txtConnectionString.TabIndex = 0;
@@ -45,7 +51,7 @@
             // lblConnectionString
             // 
             lblConnectionString.AutoSize = true;
-            lblConnectionString.Location = new Point(12, 14);
+            lblConnectionString.Location = new Point(10, 13);
             lblConnectionString.Name = "lblConnectionString";
             lblConnectionString.Size = new Size(102, 15);
             lblConnectionString.TabIndex = 2;
@@ -53,7 +59,7 @@
             // 
             // btnTestConnection
             // 
-            btnTestConnection.Location = new Point(12, 61);
+            btnTestConnection.Location = new Point(10, 60);
             btnTestConnection.Name = "btnTestConnection";
             btnTestConnection.Size = new Size(115, 23);
             btnTestConnection.TabIndex = 3;
@@ -64,7 +70,7 @@
             // lblTestIcon
             // 
             lblTestIcon.AutoSize = true;
-            lblTestIcon.Location = new Point(133, 65);
+            lblTestIcon.Location = new Point(131, 64);
             lblTestIcon.Name = "lblTestIcon";
             lblTestIcon.Size = new Size(14, 15);
             lblTestIcon.TabIndex = 4;
@@ -74,27 +80,78 @@
             // lblTestInfo
             // 
             lblTestInfo.AutoSize = true;
-            lblTestInfo.Location = new Point(153, 65);
+            lblTestInfo.Location = new Point(151, 64);
             lblTestInfo.Name = "lblTestInfo";
             lblTestInfo.Size = new Size(101, 15);
             lblTestInfo.TabIndex = 5;
             lblTestInfo.Text = "Failed to connect!";
             lblTestInfo.Visible = false;
             // 
+            // pnlContent
+            // 
+            pnlContent.Controls.Add(btnUpgrade);
+            pnlContent.Controls.Add(label1);
+            pnlContent.Controls.Add(cbxUpgrade);
+            pnlContent.Controls.Add(pnlLoading);
+            pnlContent.Controls.Add(lblConnectionString);
+            pnlContent.Controls.Add(lblTestInfo);
+            pnlContent.Controls.Add(txtConnectionString);
+            pnlContent.Controls.Add(lblTestIcon);
+            pnlContent.Controls.Add(btnTestConnection);
+            pnlContent.Location = new Point(1, 1);
+            pnlContent.Name = "pnlContent";
+            pnlContent.Size = new Size(401, 284);
+            pnlContent.TabIndex = 6;
+            // 
+            // btnUpgrade
+            // 
+            btnUpgrade.Enabled = false;
+            btnUpgrade.Location = new Point(11, 151);
+            btnUpgrade.Name = "btnUpgrade";
+            btnUpgrade.Size = new Size(115, 23);
+            btnUpgrade.TabIndex = 9;
+            btnUpgrade.Text = "Upgrade";
+            btnUpgrade.UseVisualStyleBackColor = true;
+            btnUpgrade.Click += btnUpgrade_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(11, 104);
+            label1.Name = "label1";
+            label1.Size = new Size(106, 15);
+            label1.TabIndex = 8;
+            label1.Text = "Version to upgrade";
+            // 
+            // cbxUpgrade
+            // 
+            cbxUpgrade.FormattingEnabled = true;
+            cbxUpgrade.Location = new Point(11, 122);
+            cbxUpgrade.Name = "cbxUpgrade";
+            cbxUpgrade.Size = new Size(121, 23);
+            cbxUpgrade.TabIndex = 7;
+            // 
+            // pnlLoading
+            // 
+            pnlLoading.BackgroundImage = Database.Properties.Resources.loading_image;
+            pnlLoading.BackgroundImageLayout = ImageLayout.Center;
+            pnlLoading.Location = new Point(151, 116);
+            pnlLoading.Name = "pnlLoading";
+            pnlLoading.Size = new Size(75, 70);
+            pnlLoading.TabIndex = 6;
+            pnlLoading.Visible = false;
+            // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(404, 287);
-            Controls.Add(lblTestInfo);
-            Controls.Add(lblTestIcon);
-            Controls.Add(btnTestConnection);
-            Controls.Add(lblConnectionString);
-            Controls.Add(txtConnectionString);
+            Controls.Add(pnlContent);
             Name = "frmMain";
             Text = "DbConfig";
+            pnlContent.ResumeLayout(false);
+            pnlContent.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -104,5 +161,10 @@
         private Button btnTestConnection;
         private Label lblTestIcon;
         private Label lblTestInfo;
+        private Panel pnlContent;
+        private Panel pnlLoading;
+        private Button btnUpgrade;
+        private Label label1;
+        private ComboBox cbxUpgrade;
     }
 }
