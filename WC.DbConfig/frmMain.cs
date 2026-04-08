@@ -1,9 +1,11 @@
-﻿using System;
+﻿using DbUp;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.Pkcs;
 using System.Text;
 using System.Threading.Tasks;
@@ -104,5 +106,69 @@ namespace WC.DbConfig
                 SetLoading(false);
             }
         }
+
+
+        public static int Main(string[] args)
+        {
+            var connectionString = GetConnectionString(args);
+
+            EnsureDatabaseExists(connectionString);
+
+            var upgrader =
+                DeployChanges.To
+                    .SqlDatabase(connectionString)
+                    .WithScriptsEmbeddedInAssembly(
+                        Assembly.Load("WC.Database.Scripts"),
+                        s => s.EndsWith(".sql", StringComparison.OrdinalIgnoreCase))
+                    .LogToConsole()
+                    .Build();
+
+            var scriptsToExecute = upgrader.GetScriptsToExecute();
+
+            Console.WriteLine("Pending scripts:");
+            foreach (var script in scriptsToExecute)
+            {
+                Console.WriteLine($" - {script.Name}");
+            }
+
+            var validation = DbVersionValidator.Validate(scriptsToExecute.Select(s => s.Name).ToList(), connectionString);
+            if (!validation.Success)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(validation.ErrorMessage);
+                Console.ResetColor();
+                return -2;
+            }
+
+            var result = upgrader.PerformUpgrade();
+
+            if (!result.Successful)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(result.Error);
+                Console.ResetColor();
+                return -1;
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Database upgrade completed successfully.");
+            Console.ResetColor();
+
+            return 0;
+        }
+
+        private static string GetConnectionString(string[] args)
+        {
+            if (args.Length == 0 || string.IsNullOrWhiteSpace(args[0]))
+                throw new ArgumentException("Connection string argument is missing.");
+
+            return args[0];
+        }
+
+        private static void EnsureDatabaseExists(string connectionString)
+        {
+            //DbUp.Engine.Transactions.DatabaseUpgradeExtensions.EnsureDatabase.For.SqlDatabase(connectionString);
+        }
+
     }
 }

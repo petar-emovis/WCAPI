@@ -8,9 +8,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.7" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\WC.Database.Tools\WC.Database.Tools.csproj" />
