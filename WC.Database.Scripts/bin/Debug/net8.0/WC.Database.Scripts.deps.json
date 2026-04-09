@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "WC.Database.Scripts/1.0.0": {
+        "runtime": {
+          "WC.Database.Scripts.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "WC.Database.Scripts/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

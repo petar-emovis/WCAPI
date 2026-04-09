@@ -7,12 +7,16 @@
     <Project Path="../WC.API.DataAccess.SqlServer/WC.DataAccess.SqlServer.csproj" Id="14c62f32-fd71-4ebc-9dd8-2e56e4a5a403" />
     <Project Path="../WC.API.DataAccess/WC.DataAccess.csproj" Id="9a871f6f-cfc1-4af1-82c8-4d5af76b12cf" />
   </Folder>
+  <Folder Name="/Database/">
+    <Project Path="../WC.Database.Scripts/WC.Database.Scripts.csproj" Id="0ca16453-2446-4f9e-8663-585dfca39e0a" />
+    <Project Path="../WC.Database.Tools/WC.Database.Tools.csproj" Id="86f9b439-6298-48c3-9ee0-bc890b9c3592" />
+    <Project Path="../WC.DbConfig/WC.Database.csproj" Id="62d140bb-3f71-4bfb-88a4-a0e4ce91e4be" />
+  </Folder>
   <Folder Name="/Models/">
     <Project Path="../WC.API.Models/WC.Models.csproj" Id="0f27d28d-b717-42e1-aa9d-b7c7c5ef5bb6" />
   </Folder>
   <Folder Name="/Services/">
     <Project Path="../WC.Service/WC.Service.csproj" Id="e01035e7-2bd6-4543-be5c-a2a266a5c3f3" />
   </Folder>
-  <Project Path="../WC.DbUpdater/WC.DbUpdater.csproj" Id="1b73ef26-61b4-47c9-b261-b0fd4afe9eb1" />
   <Project Path="WC.API.csproj" />
 </Solution>
