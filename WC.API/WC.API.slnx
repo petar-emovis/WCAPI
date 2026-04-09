@@ -8,6 +8,7 @@
     <Project Path="../WC.API.DataAccess/WC.DataAccess.csproj" Id="9a871f6f-cfc1-4af1-82c8-4d5af76b12cf" />
   </Folder>
   <Folder Name="/Database/">
+    <Project Path="../WC.Database.Scripts/WC.Database.Scripts.csproj" Id="0ca16453-2446-4f9e-8663-585dfca39e0a" />
     <Project Path="../WC.Database.Tools/WC.Database.Tools.csproj" Id="86f9b439-6298-48c3-9ee0-bc890b9c3592" />
     <Project Path="../WC.DbConfig/WC.Database.csproj" Id="62d140bb-3f71-4bfb-88a4-a0e4ce91e4be" />
   </Folder>

@@ -6,7 +6,7 @@ namespace WC.Database.Tools
     public static class DbVersionValidator
     {
         private static readonly Regex VersionRegex =
-            new(@"V(?<major>\d+)_(?<minor>\d+)_(?<patch>\d+)__.+\.sql$",
+            new(@"(?<major>\d+)_(?<minor>\d+)_(?<patch>\d+)__.+\.sql$",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public static ValidationResult Validate(IReadOnlyList<string> pendingScriptNames, string connectionString)
@@ -17,7 +17,7 @@ namespace WC.Database.Tools
                 .ToList();
 
             if (parsedPending.Count != pendingScriptNames.Count)
-                return ValidationResult.Fail("One or more migration files do not follow naming convention V{major}_{minor}_{patch}__Description.sql");
+                return ValidationResult.Fail("One or more migration files do not follow naming convention {major}_{minor}_{patch}__Description.sql");
 
             var duplicateVersions = parsedPending
                 .GroupBy(x => x.Version)
@@ -50,7 +50,7 @@ namespace WC.Database.Tools
             return ValidationResult.Ok();
         }
 
-        private static ParsedMigration? ParseVersion(string scriptName)
+        public static ParsedMigration? ParseVersion(string scriptName)
         {
             var fileName = Path.GetFileName(scriptName);
             var match = VersionRegex.Match(fileName);

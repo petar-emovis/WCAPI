@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WC.Database.Tools;
 
-namespace WC.DbConfig
+namespace WC.Database
 {
     public partial class frmMain : Form
     {
@@ -30,16 +30,16 @@ namespace WC.DbConfig
             {
                 _dbService = new DBService(txtConnectionString.Text);
 
-                TestPrepare();
+                PrepareInfo();
                 _success = await _dbService.TestConnectionAsync(txtConnectionString.Text);
 
                 if (_success)
                 {
-                    TestSuccessful();
+                    InfoSuccessful();
                 }
                 else
                 {
-                    TestFailed();
+                    InfoFailed();
                 }
             }
             finally
@@ -54,51 +54,75 @@ namespace WC.DbConfig
             pnlLoading.Visible = isLoading;
             Cursor = isLoading ? Cursors.WaitCursor : Cursors.Default;
         }
-        private void TestPrepare()
+        private void PrepareInfo()
         {
             lblTestIcon.Text = "";
             lblTestIcon.Visible = false;
             lblTestInfo.Visible = false;
+            lblUpdateIcon.Visible = false;
+            lblUpdateInfo.Visible = false;
             SetLoading(true);
         }
-        private void TestSuccessful()
+        private void InfoSuccessful(bool test = true)
         {
-            lblTestIcon.Text = "✓";
-            lblTestIcon.ForeColor = Color.Green;
-            lblTestIcon.Visible = lblTestInfo.Visible = true;
-            lblTestInfo.Text = "Test successful!";
-            btnUpgrade.Enabled = true;
+            if (test)
+            {
+                lblTestIcon.Text = "✓";
+                lblTestIcon.ForeColor = Color.Green;
+                lblTestIcon.Visible = lblTestInfo.Visible = true;
+                lblTestInfo.Text = "Test successful!";
+                btnUpdate.Enabled = true;
+            }
+            else
+            {
+                lblUpdateIcon.Text = "✓";
+                lblUpdateIcon.ForeColor = Color.Green;
+                lblUpdateIcon.Visible = lblUpdateInfo.Visible = true;
+                lblUpdateInfo.Text = "Update successful!";
+            }
         }
-        private void TestFailed()
+        private void InfoFailed(bool test = true)
         {
-            lblTestIcon.Text = "X";
-            lblTestIcon.ForeColor = Color.Red;
-            lblTestIcon.Visible = lblTestInfo.Visible = true;
-            lblTestInfo.Text = "Test failed!";
-            btnUpgrade.Enabled = false;
+            if (test)
+            {
+                lblTestIcon.Text = "X";
+                lblTestIcon.ForeColor = Color.Red;
+                lblTestIcon.Visible = lblTestInfo.Visible = true;
+                lblTestInfo.Text = "Test failed!";
+                btnUpdate.Enabled = false;
+            }
+            else
+            {
+                lblUpdateIcon.Text = "X";
+                lblUpdateIcon.ForeColor = Color.Red;
+                lblUpdateIcon.Visible = lblUpdateInfo.Visible = true;
+                lblUpdateInfo.Text = "Update failed!";
+            }
         }
 
-        private async Task btnUpgrade_Click(object sender, EventArgs e)
+        private async void btnUpgrade_Click(object sender, EventArgs e)
         {
             if (_dbService == null)
             {
-                TestFailed();
+                InfoFailed(false);
                 return;
             }
 
             try
             {
-                TestPrepare();
+                PrepareInfo();
 
-                _success = await _dbService.UpdateDatabaseAsync();
+                _success = true;
+                //_success = await _dbService.UpdateDatabaseAsync();
+                var result = await _dbService.UpdateDatabaseAsync();
 
                 if (_success)
                 {
-                    TestSuccessful();
+                    InfoSuccessful(false);
                 }
                 else
                 {
-                    TestFailed();
+                    InfoFailed(false);
                 }
             }
             finally
@@ -106,69 +130,5 @@ namespace WC.DbConfig
                 SetLoading(false);
             }
         }
-
-
-        public static int Main(string[] args)
-        {
-            var connectionString = GetConnectionString(args);
-
-            EnsureDatabaseExists(connectionString);
-
-            var upgrader =
-                DeployChanges.To
-                    .SqlDatabase(connectionString)
-                    .WithScriptsEmbeddedInAssembly(
-                        Assembly.Load("WC.Database.Scripts"),
-                        s => s.EndsWith(".sql", StringComparison.OrdinalIgnoreCase))
-                    .LogToConsole()
-                    .Build();
-
-            var scriptsToExecute = upgrader.GetScriptsToExecute();
-
-            Console.WriteLine("Pending scripts:");
-            foreach (var script in scriptsToExecute)
-            {
-                Console.WriteLine($" - {script.Name}");
-            }
-
-            var validation = DbVersionValidator.Validate(scriptsToExecute.Select(s => s.Name).ToList(), connectionString);
-            if (!validation.Success)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(validation.ErrorMessage);
-                Console.ResetColor();
-                return -2;
-            }
-
-            var result = upgrader.PerformUpgrade();
-
-            if (!result.Successful)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(result.Error);
-                Console.ResetColor();
-                return -1;
-            }
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Database upgrade completed successfully.");
-            Console.ResetColor();
-
-            return 0;
-        }
-
-        private static string GetConnectionString(string[] args)
-        {
-            if (args.Length == 0 || string.IsNullOrWhiteSpace(args[0]))
-                throw new ArgumentException("Connection string argument is missing.");
-
-            return args[0];
-        }
-
-        private static void EnsureDatabaseExists(string connectionString)
-        {
-            //DbUp.Engine.Transactions.DatabaseUpgradeExtensions.EnsureDatabase.For.SqlDatabase(connectionString);
-        }
-
     }
 }

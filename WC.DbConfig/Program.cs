@@ -1,4 +1,4 @@
-namespace WC.DbConfig
+namespace WC.Database
 {
     internal static class Program
     {

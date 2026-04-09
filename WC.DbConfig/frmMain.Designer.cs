@@ -1,4 +1,4 @@
-﻿namespace WC.DbConfig
+﻿namespace WC.Database
 {
     partial class frmMain
     {
@@ -34,10 +34,13 @@
             lblTestIcon = new Label();
             lblTestInfo = new Label();
             pnlContent = new Panel();
-            btnUpgrade = new Button();
+            pnlLoading = new Panel();
+            txtLog = new TextBox();
+            lblUpdateInfo = new Label();
+            lblUpdateIcon = new Label();
+            btnUpdate = new Button();
             label1 = new Label();
             cbxUpgrade = new ComboBox();
-            pnlLoading = new Panel();
             pnlContent.SuspendLayout();
             SuspendLayout();
             // 
@@ -89,10 +92,13 @@
             // 
             // pnlContent
             // 
-            pnlContent.Controls.Add(btnUpgrade);
+            pnlContent.Controls.Add(pnlLoading);
+            pnlContent.Controls.Add(txtLog);
+            pnlContent.Controls.Add(lblUpdateInfo);
+            pnlContent.Controls.Add(lblUpdateIcon);
+            pnlContent.Controls.Add(btnUpdate);
             pnlContent.Controls.Add(label1);
             pnlContent.Controls.Add(cbxUpgrade);
-            pnlContent.Controls.Add(pnlLoading);
             pnlContent.Controls.Add(lblConnectionString);
             pnlContent.Controls.Add(lblTestInfo);
             pnlContent.Controls.Add(txtConnectionString);
@@ -103,43 +109,74 @@
             pnlContent.Size = new Size(401, 284);
             pnlContent.TabIndex = 6;
             // 
-            // btnUpgrade
-            // 
-            btnUpgrade.Enabled = false;
-            btnUpgrade.Location = new Point(11, 151);
-            btnUpgrade.Name = "btnUpgrade";
-            btnUpgrade.Size = new Size(115, 23);
-            btnUpgrade.TabIndex = 9;
-            btnUpgrade.Text = "Upgrade";
-            btnUpgrade.UseVisualStyleBackColor = true;
-            btnUpgrade.Click += btnUpgrade_Click;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(11, 104);
-            label1.Name = "label1";
-            label1.Size = new Size(106, 15);
-            label1.TabIndex = 8;
-            label1.Text = "Version to upgrade";
-            // 
-            // cbxUpgrade
-            // 
-            cbxUpgrade.FormattingEnabled = true;
-            cbxUpgrade.Location = new Point(11, 122);
-            cbxUpgrade.Name = "cbxUpgrade";
-            cbxUpgrade.Size = new Size(121, 23);
-            cbxUpgrade.TabIndex = 7;
-            // 
             // pnlLoading
             // 
-            pnlLoading.BackgroundImage = Database.Properties.Resources.loading_image;
+            pnlLoading.BackgroundImage = Properties.Resources.loading_image;
             pnlLoading.BackgroundImageLayout = ImageLayout.Center;
-            pnlLoading.Location = new Point(151, 116);
+            pnlLoading.Location = new Point(161, 124);
             pnlLoading.Name = "pnlLoading";
             pnlLoading.Size = new Size(75, 70);
             pnlLoading.TabIndex = 6;
             pnlLoading.Visible = false;
+            // 
+            // txtLog
+            // 
+            txtLog.Location = new Point(11, 131);
+            txtLog.Multiline = true;
+            txtLog.Name = "txtLog";
+            txtLog.ReadOnly = true;
+            txtLog.Size = new Size(370, 143);
+            txtLog.TabIndex = 12;
+            // 
+            // lblUpdateInfo
+            // 
+            lblUpdateInfo.AutoSize = true;
+            lblUpdateInfo.Location = new Point(151, 106);
+            lblUpdateInfo.Name = "lblUpdateInfo";
+            lblUpdateInfo.Size = new Size(95, 15);
+            lblUpdateInfo.TabIndex = 11;
+            lblUpdateInfo.Text = "Failed to update!";
+            lblUpdateInfo.Visible = false;
+            // 
+            // lblUpdateIcon
+            // 
+            lblUpdateIcon.AutoSize = true;
+            lblUpdateIcon.Location = new Point(131, 106);
+            lblUpdateIcon.Name = "lblUpdateIcon";
+            lblUpdateIcon.Size = new Size(14, 15);
+            lblUpdateIcon.TabIndex = 10;
+            lblUpdateIcon.Text = "X";
+            lblUpdateIcon.Visible = false;
+            // 
+            // btnUpdate
+            // 
+            btnUpdate.Enabled = false;
+            btnUpdate.Location = new Point(11, 102);
+            btnUpdate.Name = "btnUpdate";
+            btnUpdate.Size = new Size(115, 23);
+            btnUpdate.TabIndex = 9;
+            btnUpdate.Text = "Update database";
+            btnUpdate.UseVisualStyleBackColor = true;
+            btnUpdate.Click += btnUpgrade_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(260, 85);
+            label1.Name = "label1";
+            label1.Size = new Size(106, 15);
+            label1.TabIndex = 8;
+            label1.Text = "Version to upgrade";
+            label1.Visible = false;
+            // 
+            // cbxUpgrade
+            // 
+            cbxUpgrade.FormattingEnabled = true;
+            cbxUpgrade.Location = new Point(260, 103);
+            cbxUpgrade.Name = "cbxUpgrade";
+            cbxUpgrade.Size = new Size(121, 23);
+            cbxUpgrade.TabIndex = 7;
+            cbxUpgrade.Visible = false;
             // 
             // frmMain
             // 
@@ -163,8 +200,11 @@
         private Label lblTestInfo;
         private Panel pnlContent;
         private Panel pnlLoading;
-        private Button btnUpgrade;
+        private Button btnUpdate;
         private Label label1;
         private ComboBox cbxUpgrade;
+        private Label lblUpdateInfo;
+        private Label lblUpdateIcon;
+        private TextBox txtLog;
     }
 }

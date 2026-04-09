@@ -9,8 +9,8 @@ namespace WC.Database.Tools.Models
     public class DbUpdateConfiguration
     {
         private string _versionTableSchema = "dbo";
-        private string _versionTableName = "Version";
-        private string _migrationRoot = @"Migration\";
+        private string _versionTableName = "SchemaVersions";
+        private string _migrationRoot = @"DbUpdate\";
         private string _rollBackRoot = @"RollBack\";
 
         public string? InititalDbCreationFilePath { get; set; }
