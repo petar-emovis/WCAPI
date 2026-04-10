@@ -1,5 +1,3 @@
-
-
 IF NOT EXISTS(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Country]') AND type in (N'U'))
 BEGIN	
 	CREATE TABLE [dbo].[Country]
@@ -82,21 +80,5 @@ IF NOT EXISTS(SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[IpR
 BEGIN
 	CREATE INDEX IX_IpRange_IpVersion_Active ON dbo.IpRange (IpVersion, Active);
 END
-GO
-
-
-IF NOT EXISTS(SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Version]') AND type in (N'U'))
-BEGIN	
-	CREATE TABLE [dbo].[Version]
-	(
-		Id                INT IDENTITY PRIMARY KEY,
-		ScriptName        NVARCHAR(255) NOT NULL,
-		ScriptVersion     NVARCHAR(50)  NOT NULL,
-		AppliedOnUtc      DATETIME2     NOT NULL DEFAULT GETDATE(),
-		AppliedBy         NVARCHAR(100) NULL,
-		ChecksumHash      NVARCHAR(128) NULL,
-		Success           BIT           NOT NULL
-	)
-END 
 GO
 
