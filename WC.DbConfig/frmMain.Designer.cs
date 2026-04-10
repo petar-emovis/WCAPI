@@ -127,6 +127,7 @@
             txtLog.ReadOnly = true;
             txtLog.Size = new Size(370, 143);
             txtLog.TabIndex = 12;
+            txtLog.WordWrap = false;
             // 
             // lblUpdateInfo
             // 

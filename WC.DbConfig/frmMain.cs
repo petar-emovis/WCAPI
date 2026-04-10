@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WC.Database.Tools;
+using WC.Database.Tools.Utils;
 
 namespace WC.Database
 {
@@ -112,9 +113,13 @@ namespace WC.Database
             {
                 PrepareInfo();
 
-                _success = true;
+                DbLogger dbLogger = new DbLogger("UpdateDatabaseAsync started");
+
                 //_success = await _dbService.UpdateDatabaseAsync();
-                var result = await _dbService.UpdateDatabaseAsync();
+                _success = await _dbService.UpdateDatabaseAsync(txtConnectionString.Text, dbLogger);
+
+                if (dbLogger != null)
+                    txtLog.Text = dbLogger.Text;
 
                 if (_success)
                 {

@@ -2,129 +2,112 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WC.Database.Tools.Models;
 
 namespace WC.Database.Tools
 {
     public class DbHelper
     {
         private readonly string _connectionString;
+        private readonly SqlConnection _dbConnection;
 
-        public DbHelper(string connectionString)
+        public DbHelper(string connectionString, SqlConnection dbConnection)
         {
             _connectionString = connectionString;
+            _dbConnection = dbConnection;
         }
 
-        public T ExecuteScalar<T>(string commandText, params SqlParameter[] parameters)
+        public UpgradeResult Run(IReadOnlyList<DbUpdateScript> pendingScripts)
         {
-            using (SqlConnection cnn = new SqlConnection(_connectionString))
-            {
-                SqlCommand cmd = new SqlCommand(commandText, cnn)
-                {
-                    CommandType = CommandType.Text
-                };
-                foreach (SqlParameter parameter in parameters)
-                {
-                    cmd.Parameters.Add(parameter);
-                }
+            //using var connection = new SqlConnection(_connectionString);
+            //connection.Open();
 
-                cnn.Open();
-
-                return (T)cmd.ExecuteScalar();
-            }
-        }
-        public bool ExecuteNonQuery(string commandText, params SqlParameter[] parameters)
-        {
-            try
+            foreach (var script in pendingScripts)
             {
-                using (SqlConnection cnn = new SqlConnection(_connectionString))
-                {
-                    SqlCommand cmd = new SqlCommand(commandText, cnn)
+                try
+                {                    
+                    var sw = Stopwatch.StartNew();
+                    
+                    using var transaction = _dbConnection.BeginTransaction();
+
+                    foreach (var batch in SplitBatches(script.Sql))
                     {
-                        CommandType = CommandType.Text
-                    };
-                    foreach (SqlParameter parameter in parameters)
-                    {
-                        cmd.Parameters.Add(parameter);
-                    }
-
-                    cnn.Open();
-                    cmd.ExecuteNonQuery();
-                    return true;
-                }
-            }
-            catch (SqlException ex)
-            {
-                //DbMigrationStatics.OutputMessage(ex.Message);
-                return false;
-            }
-        }
-        public bool ExecuteCommand(string commandText, string customConnString = "")
-        {
-            try
-            {
-                Regex regex = new Regex("^GO", RegexOptions.IgnoreCase | RegexOptions.Multiline);
-                string[] subCommands = regex.Split(commandText);
-
-                using (SqlConnection connection = new SqlConnection(String.IsNullOrEmpty(customConnString) ? _connectionString : customConnString))
-                {
-                    connection.Open();
-                    SqlTransaction transaction = connection.BeginTransaction();
-                    using (SqlCommand cmd = connection.CreateCommand())
-                    {
-                        cmd.Connection = connection;
-                        cmd.Transaction = transaction;
-
-                        foreach (string command in subCommands)
+                        using (var cmd = new SqlCommand(batch, _dbConnection, transaction))
+                        //using (var cmd = new SqlCommand(script.Sql, connection, transaction))
                         {
-                            if (command.Trim().Length <= 0)
-                                continue;
-
-                            cmd.CommandText = command;
-                            cmd.CommandType = CommandType.Text;
-
-                            try
-                            {
-                                cmd.ExecuteNonQuery();
-                            }
-                            catch (SqlException migrationException)
-                            {
-                                //DbMigrationStatics.OutputMessage(migrationException.Message);
-                                transaction.Rollback();
-                                return false;
-                            }
+                            cmd.CommandTimeout = 120;
+                            cmd.ExecuteNonQuery();
                         }
                     }
+                    
                     transaction.Commit();
-                    return true;
+                    sw.Stop();
+
+                    InsertLog(script, sw.ElapsedMilliseconds, true);
+                }
+                catch (Exception ex)
+                {
+                    InsertLog(script, null, false); //možda posli dodat try catch
+                    return UpgradeResult.Fail($"Script '{script.Name}' failed. {ex.Message}");
                 }
             }
-            catch (Exception ex)
-            {
-                //DbMigrationStatics.OutputMessage(ex.Message);
-                return false;
-            }
+
+            return UpgradeResult.Ok();
         }
-        public string RemoveDatabaseFromConnectionString(string connectionString)
+
+        private void InsertLog(DbUpdateScript script, long? elapsedMs, bool success)
         {
-            var connectionStringBuilder = new SqlConnectionStringBuilder(connectionString);
-            if (connectionStringBuilder.ContainsKey("Initial Catalog"))
-            {
-                connectionStringBuilder.Remove("Initial Catalog");
-            }
-            if (connectionStringBuilder.ContainsKey("Database"))
-            {
-                connectionStringBuilder.Remove("Database");
-            }
-            return connectionStringBuilder.ToString();
+            const string sql = """
+                            INSERT INTO dbo.DbUpdateLog
+                            (
+                                ScriptName,
+                                ScriptVersion,
+                                ChecksumSha256,
+                                AppliedOnUtc,
+                                AppliedBy,
+                                ExecutionMs,
+                                Success
+                            )
+                            VALUES
+                            (
+                                @ScriptName,
+                                @ScriptVersion,
+                                @ChecksumSha256,
+                                @AppliedOnUtc,
+                                @AppliedBy,
+                                @ExecutionMs,
+                                @Success
+                            )
+                            """;
+
+            using var cmd = new SqlCommand(sql, _dbConnection);
+            cmd.Parameters.AddWithValue("@ScriptName", script.Name);
+            cmd.Parameters.AddWithValue("@ScriptVersion", script.Version.ToString());
+            cmd.Parameters.AddWithValue("@ChecksumSha256", script.ChecksumSha256);
+            cmd.Parameters.AddWithValue("@AppliedOnUtc", DateTime.UtcNow);
+            cmd.Parameters.AddWithValue("@AppliedBy", Environment.UserName);
+            cmd.Parameters.AddWithValue("@ExecutionMs", (object?)elapsedMs ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Success", success);
+
+            cmd.ExecuteNonQuery();
         }
-        public string GetDatabaseNameFromConnectionString(string connectionString)
+        private static IEnumerable<string> SplitBatches(string sql)
         {
-            SqlConnection sql = new SqlConnection(connectionString);
-            return sql.Database;
+            return Regex.Split(
+                sql,
+                @"^\s*GO\s*$",
+                RegexOptions.Multiline | RegexOptions.IgnoreCase)
+                .Where(x => !string.IsNullOrWhiteSpace(x));
         }
     }
+}
+public sealed record UpgradeResult(bool Success, string? ErrorMessage)
+{
+    public static UpgradeResult Ok() => new(true, null);
+    public static UpgradeResult Fail(string message) => new(false, message);
 }
