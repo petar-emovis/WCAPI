@@ -241,7 +241,7 @@ namespace WC.DataAccess.SqlServer
                 //.ThenBy(x => x.StartIpNumeric)
                 //.ThenBy(x => x.StartIpv6High)
                 //.ThenBy(x => x.StartIpv6Low)
-                .Skip((filter.Page - 1) * filter.Page)
+                .Skip((filter.Page - 1) * filter.PageSize)
                 .Take(filter.PageSize)
                 .Select(x => new IpRangeViewModel
                 {

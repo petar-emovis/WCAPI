@@ -148,6 +148,30 @@
                 int endPage = Math.Min(Model.TotalPages, Model.Page + 2);
             }
 
+            <!-- FIRST PAGE -->
+            @if (startPage > 1)
+            {
+                <li class="page-item @(Model.Page == 1 ? "active" : "")">
+                    <a class="page-link"
+                           asp-action="Index"
+                           asp-route-page="1"
+                           asp-route-pageSize="@Model.PageSize"
+                           asp-route-search="@Model.Search"
+                           asp-route-ipVersion="@Model.IpVersion"
+                           asp-route-countryId="@Model.CountryId"
+                           asp-route-activeOnly="@Model.ActiveOnly">
+                        1
+                    </a>
+                </li>
+
+                @if (startPage > 2)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+            }
+
             @for (int i = startPage; i <= endPage; i++)
             {
                 <li class="page-item @(i == Model.Page ? "active" : "")">
@@ -160,6 +184,30 @@
                            asp-route-countryId="@Model.CountryId"
                            asp-route-activeOnly="@Model.ActiveOnly">
                         @i
+                    </a>
+                </li>
+            }
+
+            <!-- LAST PAGE -->
+            @if (endPage < Model.TotalPages)
+            {
+                @if (endPage < Model.TotalPages - 1)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+
+                <li class="page-item @(Model.Page == Model.TotalPages ? "active" : "")">
+                    <a class="page-link"
+                           asp-action="Index"
+                           asp-route-page="@Model.TotalPages"
+                           asp-route-pageSize="@Model.PageSize"
+                           asp-route-search="@Model.Search"
+                           asp-route-ipVersion="@Model.IpVersion"
+                           asp-route-countryId="@Model.CountryId"
+                           asp-route-activeOnly="@Model.ActiveOnly">
+                        @Model.TotalPages
                     </a>
                 </li>
             }
