@@ -1,5 +1,6 @@
 ﻿using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Net;
 using System.Net.Sockets;
 using WC.DataAccess.SqlServer.Configuration;
@@ -12,6 +13,7 @@ using WC.Models.Admin.Dashboard;
 using WC.Models.Admin.IpRange;
 using WC.Models.DTO;
 using WC.Models.Helpers;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using DTO = WC.Models.DTO;
 using Entities = WC.DataAccess.SqlServer.Models;
 
@@ -23,6 +25,7 @@ namespace WC.DataAccess.SqlServer
         private readonly IWcDataAccessConfiguration _configuration;
         private readonly DbContextOptionsBuilder<WhichCountryContext> _optionsBuilder;
 
+        #region Initial API
         public  WcDataAccess(IWcDataAccessConfiguration configuration) 
         {
             _optionsBuilder = new();
@@ -36,7 +39,7 @@ namespace WC.DataAccess.SqlServer
                 .EnableSensitiveDataLogging();
 
             _configuration = configuration;
-            _dbContext = new WhichCountryContext(_optionsBuilder.Options);            
+            _dbContext = new WhichCountryContext(_optionsBuilder.Options);
         }
 
         public async Task<string> RefreshIpIntegersBinariesAndVersions()
@@ -179,6 +182,7 @@ namespace WC.DataAccess.SqlServer
         }
         #endregion
 
+        #endregion
 
         public IQueryable<DTO.IpRange> IpRangesAsNoTrackingWithCountryAsQueryable()
         {
@@ -197,6 +201,8 @@ namespace WC.DataAccess.SqlServer
 
         public async Task<IpRangePagedResultModel> GetIpRangesAsync(IpRangeFilterModel filter)
         {
+            string search = string.Empty;
+
             if (filter.Page <= 0)
                 filter.Page = 1;
 
@@ -221,7 +227,7 @@ namespace WC.DataAccess.SqlServer
 
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
-                var search = filter.Search.Trim();
+                search = filter.Search.Trim();
 
                 query = query.Where(x =>
                     (x.StartIp != null && x.StartIp.Contains(search)) ||
@@ -257,6 +263,12 @@ namespace WC.DataAccess.SqlServer
                     Active = x.Active
                 })
                 .ToListAsync();
+
+            if (items.Count == 0)
+            {
+                items = await CountryFromIpAdress(search);
+                totalCount = items.Count();
+            }
 
             return new IpRangePagedResultModel
             {
@@ -406,5 +418,42 @@ namespace WC.DataAccess.SqlServer
 
             return await _dbContext.SaveChangesAsync();
         }
+
+        private async Task<List<IpRangeViewModel>> CountryFromIpAdress(string ipAddress)
+        {
+            var items = new List<IpRangeViewModel>();
+
+            //VALIDATE ipAdress
+            if (!IPAddress.TryParse(ipAddress, out var ip))
+                return items;
+
+            ip = IPAddress.Parse(ipAddress);
+            Entities.IpRange? ipRange = null;
+
+            if (ip.AddressFamily == AddressFamily.InterNetwork)
+            {
+                //IPv4
+                long ipv4Value = HelperMethods.IpToLong(ip);
+
+                ipRange = await FindByIpv4Async(ipv4Value);
+            }
+            else
+            {
+                //IPv6
+                var (ipv6High, ipv6Low) = HelperMethods.ToSqlOrderableParts(ip);
+                ipRange = await FindByIpv6Async(ipv6High, ipv6Low);
+            }
+
+            if (ipRange != null)
+            {
+                IpRangeViewModel item = new IpRangeViewModel();
+                WC_Map.Mapper.Map(ipRange, item);
+
+                items.Add(item);
+            }
+
+            return items;
+        }
+
     }
 }

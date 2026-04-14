@@ -121,10 +121,6 @@ namespace WC.Service
 
         public async Task<List<CountryViewModel>> GetCountryListAsync(string? search = null)
         {
-            //var query = _dataAccess.Countries
-            //    .AsNoTracking()
-            //    .AsQueryable();
-
             var query = _dataAccess.CountriesAsNoTrackingAsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -136,19 +132,6 @@ namespace WC.Service
                     (!string.IsNullOrEmpty(x.CountryCodeIso2) && x.CountryCodeIso2.Contains(search)) ||
                     (!string.IsNullOrEmpty(x.CountryCodeIso3) && x.CountryCodeIso3.Contains(search)));
             }
-
-            //return await query
-            //.OrderBy(x => x.Name)
-            //.Select(x => new CountryListItemModel
-            //{
-            //    Id = x.Id,
-            //    Name = x.Name,
-            //    Iso2Code = x.CountryCodeIso2,
-            //    Iso3Code = x.CountryCodeIso3,
-            //    IpRangeCount = _dataAccess.IpRanges.Count(r => r.CountryId == x.Id),
-            //    ActiveIpRangeCount = _dataAccess.IpRanges.Count(r => r.CountryId == x.Id && r.Active)
-            //})
-            //.ToListAsync();
 
             return await _dataAccess.GetCountryListAsync(query);
         }
@@ -192,12 +175,6 @@ namespace WC.Service
                 string startIp = parts[0].Trim();
                 string endIp = parts[1].Trim();
                 string countryCode = parts[2].Trim();
-
-                //if (!int.TryParse(ipVersionText, out int ipVersion))
-                //{
-                //    skipped++;
-                //    continue;
-                //}
 
                 //var country = await _dataAccess.Countries
                 //    .FirstOrDefaultAsync(x => x.Iso2Code == countryCode);

@@ -19,12 +19,6 @@ namespace WC.API.Controllers
             _wcManagementService = wcManagementService;
         }
 
-        //// GET: IpRangeController
-        //public ActionResult Index()
-        //{
-        //    return View();
-        //}
-
         //[HttpGet("RefreshIp")]
         [HttpGet("[action]")]
         public async Task<string> RefreshIpIntegersBinariesAndVersions()
@@ -40,72 +34,9 @@ namespace WC.API.Controllers
 
         //[HttpGet("GetCountry/{ipAddress}")]
         [HttpGet("[action]")]
-        public async Task<CountryResponse> GetCountry(string ipAddress)
+        public async Task<CountryResponse> GetCountryFromIpAdress(string ipAddress)
         {
             return await _wcManagementService.GetCountryFromIpAdress(new IpRangeRequest { IpAddress = ipAddress });
         }
-
-        // GET: IpRangeController/Create
-        //public ActionResult Create()
-        //{
-        //    return View();
-        //}
-
-        //// POST: IpRangeController/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create(IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-
-        //// GET: IpRangeController/Edit/5
-        //public ActionResult Edit(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: IpRangeController/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
-
-        //// GET: IpRangeController/Delete/5
-        //public ActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
-
-        //// POST: IpRangeController/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Delete(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
     }
 }
