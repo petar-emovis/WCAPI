@@ -184,20 +184,20 @@ namespace WC.DataAccess.SqlServer
 
         #endregion
 
-        public IQueryable<DTO.IpRange> IpRangesAsNoTrackingWithCountryAsQueryable()
-        {
-            //var lista = _dbContext.IpRanges
-            //    .AsNoTracking()
-            //    .Include(x => x.Country)
-            //    .AsQueryable();
+        //public IQueryable<DTO.IpRange> IpRangesAsNoTrackingWithCountryAsQueryable()
+        //{
+        //    //var lista = _dbContext.IpRanges
+        //    //    .AsNoTracking()
+        //    //    .Include(x => x.Country)
+        //    //    .AsQueryable();
 
-            var lista = _dbContext.IpRanges
-                .AsNoTracking()
-                .ProjectTo<DTO.IpRange>(WC_Map.Mapper.ConfigurationProvider);
+        //    var lista = _dbContext.IpRanges
+        //        .AsNoTracking()
+        //        .ProjectTo<DTO.IpRange>(WC_Map.Mapper.ConfigurationProvider);
 
 
-            return lista;
-        }
+        //    return lista;
+        //}
 
         public async Task<IpRangePagedResultModel> GetIpRangesAsync(IpRangeFilterModel filter)
         {
@@ -285,20 +285,29 @@ namespace WC.DataAccess.SqlServer
 
         public async Task<IpRangeViewModel?> GetIpRangeByIdAsync(int id)
         {
-            return await _dbContext.IpRanges
+            var item =  await _dbContext.IpRanges
                 .AsNoTracking()
                 .Where(x => x.Id == id)
-                .Select(x => new IpRangeViewModel
-                {
-                    Id = x.Id,
-                    CountryId = x.CountryId,
-                    CountryName = x.Country.Name,
-                    IpVersion = x.IpVersion ?? 0,
-                    StartIp = x.StartIp ?? string.Empty,
-                    EndIp = x.EndIp ?? string.Empty,
-                    Active = x.Active
-                })
                 .FirstOrDefaultAsync();
+
+            IpRangeViewModel result = new IpRangeViewModel();
+            WC_Map.Mapper.Map(item, result);
+            return result;
+            //return await _dbContext.IpRanges
+            //    .AsNoTracking()
+            //    .Where(x => x.Id == id)
+            //    .ProjectTo<IpRangeViewModel>(WC_Map.Mapper.ConfigurationProvider)
+            //    //.Select(x => new IpRangeViewModel
+            //    //{
+            //    //    Id = x.Id,
+            //    //    CountryId = x.CountryId,
+            //    //    CountryName = x.Country.Name,
+            //    //    IpVersion = x.IpVersion ?? 0,
+            //    //    StartIp = x.StartIp ?? string.Empty,
+            //    //    EndIp = x.EndIp ?? string.Empty,
+            //    //    Active = x.Active
+            //    //})
+            //    .FirstOrDefaultAsync();
         }
 
         public async Task<List<CountryViewModel>> GetCountriesAsync()
@@ -317,7 +326,7 @@ namespace WC.DataAccess.SqlServer
         public async Task CreateIpRangeAsync(DTO.IpRange model)
         {
             var entity = new Entities.IpRange();
-            //MapAndNormalize(entity, model);
+            
             entity = WC_Map.Mapper.Map<Entities.IpRange>(model);
 
             _dbContext.IpRanges.Add(entity);

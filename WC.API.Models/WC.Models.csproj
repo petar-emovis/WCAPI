@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTO\IpRange\Responses\" />
+    <Compile Remove="DTO\IpRange\Responses\**" />
+    <EmbeddedResource Remove="DTO\IpRange\Responses\**" />
+    <None Remove="DTO\IpRange\Responses\**" />
   </ItemGroup>
 
   <ItemGroup>
