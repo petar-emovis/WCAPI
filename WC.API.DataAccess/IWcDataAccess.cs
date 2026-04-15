@@ -12,7 +12,6 @@ namespace WC.DataAccess
         Task<string> RefreshIPv6HighsAndLows();
         Task<DTO.CountryResponse> GetCountryFromIpAdress(string ipAddress, CancellationToken cancellationToken = default);
 
-        IQueryable<DTO.IpRange> IpRangesAsNoTrackingWithCountryAsQueryable();
         Task<IpRangePagedResultModel> GetIpRangesAsync(IpRangeFilterModel filter);
         Task<IpRangeViewModel?> GetIpRangeByIdAsync(int id);
         Task<List<CountryViewModel>> GetCountriesAsync();
