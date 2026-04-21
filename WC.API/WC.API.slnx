@@ -18,5 +18,8 @@
   <Folder Name="/Services/">
     <Project Path="../WC.Service/WC.Service.csproj" Id="e01035e7-2bd6-4543-be5c-a2a266a5c3f3" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="../WC.API.Tests/WC.API.Tests.csproj" Id="b640959d-4605-4754-a59e-1ae32d9643b4" />
+  </Folder>
   <Project Path="WC.API.csproj" />
 </Solution>

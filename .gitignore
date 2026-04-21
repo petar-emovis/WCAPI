@@ -29,3 +29,5 @@
 /WC.Database.Scripts/bin/Debug/net8.0/WC.Database.Scripts.dll
 /WC.Database.Scripts/bin/Debug/net8.0/WC.Database.Scripts.pdb
 /WC.Database.Scripts/bin/Debug/net8.0/WC.Database.Scripts.dll
+/WC.API.Tests/bin/Debug/net8.0
+/WC.API.Tests/obj
