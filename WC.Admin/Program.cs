@@ -1,3 +1,4 @@
+using WC.Admin.ApiClient;
 using WC.DataAccess.Bundle;
 using WC.DataAccess.SqlServer.Map;
 using WC.DataAccess.SqlServer.Models;
@@ -14,6 +15,21 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddWcDataAccess();
 
 // register services
+builder.Services.AddHttpClient<WcApiClient>()
+    .ConfigureHttpClient(client =>
+    {
+        client.BaseAddress = new Uri(
+            builder.Configuration["ApiSettings:BaseUrl"] ?? "http://localhost:5171");
+    });
+
+builder.Services.AddTransient<WcApiClient>(sp =>
+{
+    var httpClient = sp.GetRequiredService<IHttpClientFactory>()
+                       .CreateClient(nameof(WcApiClient));
+    var baseUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? "http://localhost:5171";
+    return new WcApiClient(baseUrl, httpClient);
+});
+
 builder.Services.AddScoped<IWcManagementService, WcManagementService>();
 //builder.Services.AddAutoMapper(typeof(WhichCountryContext).Assembly);
 builder.Services.AddAutoMapper(cfg => { }, typeof(WhichCountryContext).Assembly);
