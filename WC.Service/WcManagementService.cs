@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Microsoft.AspNetCore.Hosting;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using WC.DataAccess;
@@ -216,6 +217,13 @@ namespace WC.Service
                 }
 
                 //DODAT VALIDACIJU ZA DUPLIKATE
+                var overlap = await IsIpAdressAlreadyRegisteredAsync(startIp, endIp);
+                if (overlap)
+                {
+                    //POSTOJI OVERLAP ILI PREKLAPANJA S POSTOJEĆIM IP ADRESAMA
+                    skipped++;
+                    continue;
+                }
 
                 try
                 {
@@ -256,6 +264,38 @@ namespace WC.Service
                 UpdatedCount = updated,
                 SkippedCount = skipped
             };
+        }
+
+        public async Task<bool> IsIpAdressAlreadyRegisteredAsync(string startIp, string endIp)
+        {
+            if (!IPAddress.TryParse(startIp, out var startAddr))
+                return true;
+
+            if (!IPAddress.TryParse(endIp, out var endAddr))
+                return true; 
+
+            bool overlaps;
+
+            if (startAddr.AddressFamily == AddressFamily.InterNetwork)
+            {
+                long startNum = HelperMethods.IpToLong(startAddr);
+                long endNum = HelperMethods.IpToLong(endAddr);
+
+                overlaps = await _dataAccess.IsIpv4RangeOverlappingAsync(startNum, endNum);
+            }
+            else
+            {
+                var (startHigh, startLow) = HelperMethods.ToSqlOrderableParts(startAddr);
+                var (endHigh, endLow) = HelperMethods.ToSqlOrderableParts(endAddr);
+
+                overlaps = await _dataAccess.IsIpv6RangeOverlappingAsync(
+                    startHigh, startLow, endHigh, endLow);
+            }
+
+            if (overlaps) // pOSTOJI OVERLAPPING 
+                return true; 
+
+            return false;
         }
         #endregion
 

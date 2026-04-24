@@ -1,4 +1,5 @@
-﻿using WC.Models.Admin;
+﻿using WC.Models;
+using WC.Models.Admin;
 using WC.Models.Admin.Country;
 using WC.Models.Admin.IpRange;
 using WC.Models.DTO;
@@ -29,6 +30,7 @@ namespace WC.DataAccess
         Task<List<CountryViewModel>> GetCountryListAsync(IQueryable<DTO.Country> query);
         Task<DTO.Country?> GetCountryByCountryCodeAsync(string countryCode);
         Task<int> AddIpRangesAsync(List<DTO.IpRange> ipRanges);
-
+        Task<bool> IsIpv4RangeOverlappingAsync(long newStart, long newEnd);
+        Task<bool> IsIpv6RangeOverlappingAsync(long newStartHigh, long newStartLow, long newEndHigh, long newEndLow);
     }
 }

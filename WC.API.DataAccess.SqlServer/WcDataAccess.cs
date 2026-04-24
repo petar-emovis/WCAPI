@@ -180,6 +180,35 @@ namespace WC.DataAccess.SqlServer
                 .ThenByDescending(i => i.StartIpv6Low)
                 .FirstOrDefaultAsync(cancellationToken);
         }
+
+        public async Task<bool> IsIpv4RangeOverlappingAsync(long newStart, long newEnd)
+        {
+            var query = _dbContext.IpRanges
+                .Where(i => i.Active
+                         && i.IpVersion == (int)IpVersionEnum.IPv4
+                         && i.StartIpNumeric <= newEnd
+                         && i.EndIpNumeric >= newStart);
+
+            return await query.AnyAsync();
+        }
+
+        public async Task<bool> IsIpv6RangeOverlappingAsync(long newStartHigh, long newStartLow,long newEndHigh, long newEndLow)
+        {
+            var query = _dbContext.IpRanges
+                .Where(i => i.Active
+                         && i.IpVersion == (int)IpVersionEnum.IPv6
+                         && (
+                             i.StartIpv6High < newEndHigh ||
+                             (i.StartIpv6High == newEndHigh && i.StartIpv6Low <= newEndLow)
+                         )
+                         && (
+                             i.EndIpv6High > newStartHigh ||
+                             (i.EndIpv6High == newStartHigh && i.EndIpv6Low >= newStartLow)
+                         ));
+
+            return await query.AnyAsync();
+        }
+
         #endregion
 
         #endregion
@@ -392,6 +421,8 @@ namespace WC.DataAccess.SqlServer
 
             return await _dbContext.SaveChangesAsync();
         }
+
+
 
         private async Task<List<IpRangeViewModel>> CountryFromIpAdress(string ipAddress)
         {
