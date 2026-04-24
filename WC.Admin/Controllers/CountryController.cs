@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WC.Admin.ApiClient;
+using WC.Admin.Mappings;
 using WC.Models.Admin.Country;
 using WC.Service;
 
@@ -17,7 +18,7 @@ namespace WC.Admin.Controllers
         public async Task<IActionResult> Index(string? search)
         {
             var model = await _wcApiClient.GetCountriesFilteredAsync(search == null ? "" : search);
-            return View(model);
+            return View(model.Select(s => s.ToViewModel()).ToList());
         }
     }
 }
