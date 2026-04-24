@@ -184,20 +184,6 @@ namespace WC.DataAccess.SqlServer
 
         #endregion
 
-        //public IQueryable<DTO.IpRange> IpRangesAsNoTrackingWithCountryAsQueryable()
-        //{
-        //    //var lista = _dbContext.IpRanges
-        //    //    .AsNoTracking()
-        //    //    .Include(x => x.Country)
-        //    //    .AsQueryable();
-
-        //    var lista = _dbContext.IpRanges
-        //        .AsNoTracking()
-        //        .ProjectTo<DTO.IpRange>(WC_Map.Mapper.ConfigurationProvider);
-
-
-        //    return lista;
-        //}
 
         public async Task<IpRangePagedResultModel> GetIpRangesAsync(IpRangeFilterModel filter)
         {
@@ -208,9 +194,6 @@ namespace WC.DataAccess.SqlServer
 
             if (filter.PageSize <= 0)
                 filter.PageSize = 50;
-
-            if (filter.PageSize > 200)
-                filter.PageSize = 200;
 
             var query = _dbContext.IpRanges
                .AsNoTracking()
@@ -255,8 +238,6 @@ namespace WC.DataAccess.SqlServer
                     CountryId = x.CountryId,
                     CountryName = x.Country.Name,
                     CountryCodeIso2 = x.Country.CountryCodeIso2,
-                    //CountryName = x.Country != null ? x.Country.Name : string.Empty,
-                    //CountryCodeIso2 = x.Country != null ? x.Country.CountryCodeIso2 : string.Empty,
                     IpVersion = x.IpVersion != null ? (int)x.IpVersion : 0,
                     StartIp = x.StartIp ?? string.Empty,
                     EndIp = x.EndIp ?? string.Empty,
@@ -293,21 +274,6 @@ namespace WC.DataAccess.SqlServer
             IpRangeViewModel result = new IpRangeViewModel();
             WC_Map.Mapper.Map(item, result);
             return result;
-            //return await _dbContext.IpRanges
-            //    .AsNoTracking()
-            //    .Where(x => x.Id == id)
-            //    .ProjectTo<IpRangeViewModel>(WC_Map.Mapper.ConfigurationProvider)
-            //    //.Select(x => new IpRangeViewModel
-            //    //{
-            //    //    Id = x.Id,
-            //    //    CountryId = x.CountryId,
-            //    //    CountryName = x.Country.Name,
-            //    //    IpVersion = x.IpVersion ?? 0,
-            //    //    StartIp = x.StartIp ?? string.Empty,
-            //    //    EndIp = x.EndIp ?? string.Empty,
-            //    //    Active = x.Active
-            //    //})
-            //    .FirstOrDefaultAsync();
         }
 
         public async Task<List<CountryViewModel>> GetCountriesAsync()
@@ -354,7 +320,6 @@ namespace WC.DataAccess.SqlServer
                 return;
 
             entity.Active = false;
-            //_dbContext.IpRanges.Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
 

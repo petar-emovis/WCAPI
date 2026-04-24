@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WC.Admin.ApiClient;
 using WC.Models.Admin.Dashboard;
 using WC.Service;
 
@@ -6,16 +7,16 @@ namespace WC.Admin.Controllers
 {
     public class DashboardController : Controller
     {
-        private readonly IWcManagementService _wcManagementService;
+        private readonly WcApiClient _wcApiClient;
 
-        public DashboardController(IWcManagementService wcManagementService)
+        public DashboardController(WcApiClient wcApiClient)
         {
-            _wcManagementService = wcManagementService;
+            _wcApiClient = wcApiClient;
         }
 
         public async Task<IActionResult> Index()
         {
-            var model = await _wcManagementService.GetDashboardSummaryAsync();
+            var model = await _wcApiClient.GetDashboardSummaryAsync();
             return View(model);
         }
     }

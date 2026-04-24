@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WC.Admin.ApiClient;
 using WC.Models.Admin.Country;
 using WC.Service;
 
@@ -6,16 +7,16 @@ namespace WC.Admin.Controllers
 {
     public class CountryController : Controller
     {
-        private readonly IWcManagementService _wcManagementService;
+        private readonly WcApiClient _wcApiClient;
 
-        public CountryController(IWcManagementService wcManagementService)
+        public CountryController(WcApiClient wcApiClient)
         {
-            _wcManagementService = wcManagementService;
+            _wcApiClient = wcApiClient;
         }
 
         public async Task<IActionResult> Index(string? search)
         {
-            var model = await _wcManagementService.GetCountryListAsync(search);
+            var model = await _wcApiClient.GetCountriesFilteredAsync(search == null ? "" : search);
             return View(model);
         }
     }

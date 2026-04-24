@@ -1,18 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using WC.Admin.ApiClient;
 using WC.Models;
 using WC.Models.Admin;
 using WC.Service;
+using IpRangeViewModel = WC.Models.Admin.IpRangeViewModel;
 
 namespace WC.Admin.Controllers
 {
     public class IpRangeAdminController : Controller
     {
-        private readonly IWcManagementService _wcManagementService;
+        //private readonly IWcManagementService _wcManagementService;
+        private readonly WcApiClient _wcApiClient;
 
-        public IpRangeAdminController(IWcManagementService wcManagementService)
+        public IpRangeAdminController(WcApiClient wcApiClient)
         {
-            _wcManagementService = wcManagementService;
+            //_wcManagementService = wcManagementService;
+            _wcApiClient = wcApiClient;
         }
 
         public async Task<IActionResult> Index(
@@ -23,15 +27,23 @@ namespace WC.Admin.Controllers
             int page = 1,
             int pageSize = 50)
         {
-            var model = await _wcManagementService.GetIpRangesAsync(new IpRangeFilterModel
-            {
-                CountryId = countryId,
-                IpVersion = ipVersion,
-                ActiveOnly = activeOnly,
-                Search = search,
-                Page = page,
-                PageSize = pageSize
-            });
+            var model = await _wcApiClient.GetIpRangesAsync(
+                 countryId,
+                 ipVersion,
+                activeOnly,
+                search,
+                page,
+                pageSize
+            );
+            //var model = await _wcApiClient.GetIpRangesAsync(new ApiClient.IpRangeFilterModel
+            //{
+            //    CountryId = countryId,
+            //    IpVersion = ipVersion,
+            //    ActiveOnly = activeOnly,
+            //    Search = search,
+            //    Page = page,
+            //    PageSize = pageSize
+            //});
 
             return View(model);
         }
@@ -60,7 +72,7 @@ namespace WC.Admin.Controllers
 
             try
             {
-                await _wcManagementService.CreateIpRangeAsync(new IpRangeViewModel
+                await _wcApiClient.CreateIpRangeAsync(new ApiClient.IpRangeViewModel
                 {
                     CountryId = vm.CountryId,
                     IpVersion = vm.IpVersion,
@@ -83,7 +95,7 @@ namespace WC.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var data = await _wcManagementService.GetIpRangeByIdAsync(id);
+            var data = await _wcApiClient.GetIpRangeByIdAsync(id);
 
             if (data == null)
                 return NotFound();
@@ -114,7 +126,7 @@ namespace WC.Admin.Controllers
 
             try
             {
-                await _wcManagementService.UpdateIpRangeAsync(new IpRangeViewModel
+                await _wcApiClient.UpdateIpRangeAsync(vm.Id, new ApiClient.IpRangeViewModel
                 {
                     Id = vm.Id,
                     CountryId = vm.CountryId,
@@ -138,7 +150,7 @@ namespace WC.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var data = await _wcManagementService.GetIpRangeByIdAsync(id);
+            var data = await _wcApiClient.GetIpRangeByIdAsync(id);
 
             if (data == null)
                 return NotFound();
@@ -161,14 +173,14 @@ namespace WC.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _wcManagementService.DeleteIpRangeAsync(id);
+            await _wcApiClient.DeleteIpRangeAsync(id);
             TempData["Success"] = "IP range deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 
         private async Task<IpRangeEditModel> BuildViewModelAsync(IpRangeEditModel vm)
         {
-            var countries = await _wcManagementService.GetCountriesAsync();
+            var countries = await _wcApiClient.GetCountriesAsync();
 
             vm.CountryOptions = countries
                 .Select(x => new SelectListItem(x.Name, x.Id.ToString()))
