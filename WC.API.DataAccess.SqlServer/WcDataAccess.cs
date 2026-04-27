@@ -122,7 +122,7 @@ namespace WC.DataAccess.SqlServer
                 var res = await FindByIpv4Async(ipv4Value, cancellationToken);
 
                 if (res != null)
-                    response = new CountryResponse { CountryName = res.Country.Name };
+                    response = PopulateCountryResponse(res);
 
             }
             else //if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
@@ -143,8 +143,21 @@ namespace WC.DataAccess.SqlServer
                 var res = await FindByIpv6Async(ipv6High, ipv6Low, cancellationToken);
 
                 if (res != null)
-                    response = new CountryResponse { CountryName = res.Country.Name };
+                    response = PopulateCountryResponse(res);
             }
+
+            return response;
+        }
+
+        private CountryResponse PopulateCountryResponse(Entities.IpRange? ipRange)
+        {
+            var response = new CountryResponse();
+
+            response.CountryName = ipRange?.Country.Name;
+            response.CountryCodeIso2 = ipRange?.Country.CountryCodeIso2;
+            response.CountryCodeIso3 = ipRange?.Country.CountryCodeIso3;
+            response.StartIp = ipRange?.StartIp;
+            response.EndIp = ipRange?.EndIp;
 
             return response;
         }
