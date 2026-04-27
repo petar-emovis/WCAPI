@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WC.Admin.ApiClient;
+using WC.Admin.Mappings;
 using WC.Models;
 using WC.Models.Admin;
 using WC.Service;
@@ -45,7 +46,7 @@ namespace WC.Admin.Controllers
             //    PageSize = pageSize
             //});
 
-            return View(model);
+            return View(model.ToLocalModel());
         }
 
         [HttpGet]
@@ -100,16 +101,7 @@ namespace WC.Admin.Controllers
             if (data == null)
                 return NotFound();
 
-            var vm = await BuildViewModelAsync(new IpRangeEditModel
-            {
-                Id = data.Id,
-                CountryId = data.CountryId,
-                CountryName = data.CountryName,
-                IpVersion = data.IpVersion,
-                StartIp = data.StartIp,
-                EndIp = data.EndIp,
-                Active = data.Active
-            });
+            var vm = await BuildViewModelAsync(data.ToEditModel());
 
             return View(vm);
         }
@@ -126,15 +118,16 @@ namespace WC.Admin.Controllers
 
             try
             {
-                await _wcApiClient.UpdateIpRangeAsync(vm.Id, new ApiClient.IpRangeViewModel
-                {
-                    Id = vm.Id,
-                    CountryId = vm.CountryId,
-                    IpVersion = vm.IpVersion,
-                    StartIp = vm.StartIp,
-                    EndIp = vm.EndIp,
-                    Active = vm.Active
-                });
+                await _wcApiClient.UpdateIpRangeAsync(vm.Id, vm.ToApiModel());
+                //await _wcApiClient.UpdateIpRangeAsync(vm.Id, new ApiClient.IpRangeViewModel
+                //{
+                //    Id = vm.Id,
+                //    CountryId = vm.CountryId,
+                //    IpVersion = vm.IpVersion,
+                //    StartIp = vm.StartIp,
+                //    EndIp = vm.EndIp,
+                //    Active = vm.Active
+                //});
 
                 TempData["Success"] = "IP range updated successfully.";
                 return RedirectToAction(nameof(Index));
@@ -155,16 +148,7 @@ namespace WC.Admin.Controllers
             if (data == null)
                 return NotFound();
 
-            var vm = await BuildViewModelAsync(new IpRangeEditModel
-            {
-                Id = data.Id,
-                CountryId = data.CountryId,
-                CountryName = data.CountryName,
-                IpVersion = data.IpVersion,
-                StartIp = data.StartIp,
-                EndIp = data.EndIp,
-                Active = data.Active
-            });
+            var vm = await BuildViewModelAsync(data.ToEditModel());
 
             return View(vm);
         }

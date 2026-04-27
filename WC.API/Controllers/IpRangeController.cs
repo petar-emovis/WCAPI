@@ -56,25 +56,19 @@ namespace WC.API.Controllers
 
 
 
-        [HttpGet("[action]", Name = "GetCountryFromIpAdress")]
-        public async Task<CountryResponse> GetCountryFromIpAdress(string ipAddress)
-        {
-            return await _wcManagementService.GetCountryFromIpAdress(new IpRangeRequest { IpAddress = ipAddress });
-        }
-
 
 
         //metode za prvotni unos podataka u bazu, nakon toga se vise nece koristiti
-        [HttpGet("[action]")]
-        public async Task<string> RefreshIpIntegersBinariesAndVersions()
-        {
-            return await _wcManagementService.RefreshIpIntegersBinariesAndVersions();
-        }
+        //[HttpGet("[action]")]
+        //public async Task<string> RefreshIpIntegersBinariesAndVersions()
+        //{
+        //    return await _wcManagementService.RefreshIpIntegersBinariesAndVersions();
+        //}
 
-        [HttpGet("[action]")]
-        public async Task<string> RefreshIPv6HighsAndLows()
-        {
-            return await _wcManagementService.RefreshIPv6HighsAndLows();
-        }
+        //[HttpGet("[action]")]
+        //public async Task<string> RefreshIPv6HighsAndLows()
+        //{
+        //    return await _wcManagementService.RefreshIPv6HighsAndLows();
+        //}
     }
 }
