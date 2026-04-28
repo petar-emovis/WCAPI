@@ -6,12 +6,12 @@ using System.Net.Sockets;
 using WC.DataAccess.SqlServer.Configuration;
 using WC.DataAccess.SqlServer.Map;
 using WC.DataAccess.SqlServer.Models;
-using WC.Models;
 using WC.Models.Admin;
 using WC.Models.Admin.Country;
 using WC.Models.Admin.Dashboard;
 using WC.Models.Admin.IpRange;
 using WC.Models.DTO;
+using WC.Models.Enums;
 using WC.Models.Helpers;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using DTO = WC.Models.DTO;
@@ -109,7 +109,7 @@ namespace WC.DataAccess.SqlServer
         }
 
         #region Get Country from Ip Address
-        public async Task<DTO.CountryResponse> GetCountryFromIpAdress(string ipAddress, CancellationToken cancellationToken = default)
+        public async Task<DTO.CountryResponse> GetCountryFromIpAddress(string ipAddress, CancellationToken cancellationToken = default)
         {
             CountryResponse response = new DTO.CountryResponse();
             IPAddress ip = IPAddress.Parse(ipAddress);

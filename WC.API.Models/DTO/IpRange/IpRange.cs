@@ -1,4 +1,6 @@
-﻿namespace WC.Models.DTO
+﻿using WC.Models.Enums;
+
+namespace WC.Models.DTO
 {
     public class IpRange
     {

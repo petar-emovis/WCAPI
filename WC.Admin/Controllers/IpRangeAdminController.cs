@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WC.Admin.ApiClient;
 using WC.Admin.Mappings;
-using WC.Models;
 using WC.Models.Admin;
+using WC.Models.Enums;
 using WC.Service;
 using IpRangeViewModel = WC.Models.Admin.IpRangeViewModel;
 

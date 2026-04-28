@@ -11,7 +11,7 @@ namespace WC.DataAccess
     {
         Task<string> RefreshIpIntegersBinariesAndVersions();
         Task<string> RefreshIPv6HighsAndLows();
-        Task<DTO.CountryResponse> GetCountryFromIpAdress(string ipAddress, CancellationToken cancellationToken = default);
+        Task<DTO.CountryResponse> GetCountryFromIpAddress(string ipAddress, CancellationToken cancellationToken = default);
 
         Task<IpRangePagedResultModel> GetIpRangesAsync(IpRangeFilterModel filter);
         Task<IpRangeViewModel?> GetIpRangeByIdAsync(int id);

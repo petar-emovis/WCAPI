@@ -10,6 +10,7 @@ namespace WC.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    //[Route("[controller]/[action]")]
     public class IpRangeController : Controller
     {
         private readonly ILogger<IpRangeController> _logger;
@@ -28,6 +29,7 @@ namespace WC.API.Controllers
         [HttpGet("{id}", Name = "GetIpRangeById")]
         public async Task<ActionResult<IpRangeViewModel>> GetById(int id)
         {
+            _logger.LogInformation("Pozvana je metoda GetIpRangeById u {Time}, a proslijeđen je id:{id}", DateTime.UtcNow, id);
             var result = await _wcManagementService.GetIpRangeByIdAsync(id);
             return result is null ? NotFound() : Ok(result);
         }
@@ -35,6 +37,7 @@ namespace WC.API.Controllers
         [HttpPost(Name = "CreateIpRange")]
         public async Task<IActionResult> Create([FromBody] IpRangeViewModel model)
         {
+            _logger.LogInformation("Pozvana je metoda CreateIpRange u {Time}", DateTime.UtcNow);
             await _wcManagementService.CreateIpRangeAsync(model);
             return Ok();
         }
@@ -42,6 +45,7 @@ namespace WC.API.Controllers
         [HttpPut("{id}", Name = "UpdateIpRange")]
         public async Task<IActionResult> Update(int id, [FromBody] IpRangeViewModel model)
         {
+            _logger.LogInformation("Pozvana je metoda UpdateIpRange u {Time}", DateTime.UtcNow);
             model.Id = id;
             await _wcManagementService.UpdateIpRangeAsync(model);
             return Ok();
@@ -50,6 +54,7 @@ namespace WC.API.Controllers
         [HttpDelete("{id}", Name = "DeleteIpRange")]
         public async Task<IActionResult> Delete(int id)
         {
+            _logger.LogInformation("Pozvana je metoda DeleteIpRange u {Time}", DateTime.UtcNow);
             await _wcManagementService.DeleteIpRangeAsync(id);
             return Ok();
         }

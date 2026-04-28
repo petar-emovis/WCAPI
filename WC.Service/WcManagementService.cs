@@ -3,13 +3,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using WC.DataAccess;
-using WC.Models;
 using WC.Models.Admin;
 using WC.Models.Admin.Country;
 using WC.Models.Admin.Dashboard;
 using WC.Models.Admin.Import;
 using WC.Models.Admin.IpRange;
 using WC.Models.DTO;
+using WC.Models.Enums;
 using WC.Models.Helpers;
 using WC.Service.Helper;
 
@@ -35,13 +35,13 @@ namespace WC.Service
             return await _dataAccess.RefreshIPv6HighsAndLows();
         }
 
-        public async Task<CountryResponse> GetCountryFromIpAdress(IpRangeRequest ipAddress)
+        public async Task<CountryResponse> GetCountryFromIpAddress(IpRangeRequest ipAddress)
         {
             //VALIDATE ipAdress
             if (!IPAddress.TryParse(ipAddress.IpAddress, out var ip))
                 throw new InvalidOperationException("IP address is invalid.");
 
-            var result = await _dataAccess.GetCountryFromIpAdress(ipAddress.IpAddress);
+            var result = await _dataAccess.GetCountryFromIpAddress(ipAddress.IpAddress);
 
             return result;
         }
