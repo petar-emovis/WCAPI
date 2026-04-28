@@ -20,5 +20,8 @@ namespace WC.API.Controllers
         {
             return await _wcManagementService.GetDashboardSummaryAsync();
         }
+
+        //može se i , bez injectiona
+        //public async Task<ActionResult<DashboardViewModel>> Index([FromServices] IWcManagementService wcManagementService)
     }
 }

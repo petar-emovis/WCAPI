@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WC.Models
+namespace WC.Models.Enums
 {
     public enum IpVersionEnum
     {

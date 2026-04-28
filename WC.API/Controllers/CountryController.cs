@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 using WC.Models.Admin;
 using WC.Models.Admin.Country;
 using WC.Models.Admin.IpRange;
@@ -8,9 +9,11 @@ using WC.Service;
 namespace WC.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    //[Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class CountryController : Controller
     {
+        //private readonly ILogger<CountryController> _logger;
         private readonly IWcManagementService _wcManagementService;
 
         public CountryController(IWcManagementService wcManagementService)
@@ -23,16 +26,17 @@ namespace WC.API.Controllers
         public async Task<ActionResult<List<CountryViewModel>>> GetAll()
             => Ok(await _wcManagementService.GetCountryListAsync());
 
+        [DisplayName("SearchCountries")]
         [HttpGet("{search}", Name = "GetCountriesFiltered")]
         //[HttpGet(Name = "GetCountriesFiltered")]
         public async Task<ActionResult<List<CountryViewModel>>> GetCountriesFiltered(string? search)
             => Ok(await _wcManagementService.GetCountryListAsync(search));
 
 
-        [HttpGet("[action]", Name = "GetCountryFromIpAdress")]
-        public async Task<CountryResponse> GetCountryFromIpAdress(string ipAddress)
+        [HttpGet("[action]", Name = "GetCountryFromIpAddress")]
+        public async Task<CountryResponse> GetCountryFromIpAddress(string ipAddress)
         {
-            return await _wcManagementService.GetCountryFromIpAdress(new IpRangeRequest { IpAddress = ipAddress });
+            return await _wcManagementService.GetCountryFromIpAddress(new IpRangeRequest { IpAddress = ipAddress });
         }
 
     }

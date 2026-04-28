@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using WC.Models;
+using WC.Models.Enums;
 using DTO = WC.Models.DTO;
 using Entities = WC.DataAccess.SqlServer.Models;
 

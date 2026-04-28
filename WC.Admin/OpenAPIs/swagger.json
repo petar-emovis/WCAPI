@@ -93,6 +93,45 @@
         }
       }
     },
+    "/Country/GetCountryFromIpAddress": {
+      "get": {
+        "tags": [
+          "Country"
+        ],
+        "operationId": "GetCountryFromIpAddress",
+        "parameters": [
+          {
+            "name": "ipAddress",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/Dashboard": {
       "get": {
         "tags": [
@@ -131,19 +170,20 @@
         "operationId": "ImportIpRanges",
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/ImportViewModel"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ImportViewModel"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ImportViewModel"
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
               }
             }
           }
@@ -154,17 +194,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ImportViewModel"
+                  "$ref": "#/components/schemas/ImportResultModel"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ImportViewModel"
+                  "$ref": "#/components/schemas/ImportResultModel"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ImportViewModel"
+                  "$ref": "#/components/schemas/ImportResultModel"
                 }
               }
             }
@@ -383,103 +423,6 @@
           }
         }
       }
-    },
-    "/IpRange/GetCountryFromIpAdress": {
-      "get": {
-        "tags": [
-          "IpRange"
-        ],
-        "operationId": "GetCountryFromIpAdress",
-        "parameters": [
-          {
-            "name": "ipAddress",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountryResponse"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountryResponse"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CountryResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/IpRange/RefreshIpIntegersBinariesAndVersions": {
-      "get": {
-        "tags": [
-          "IpRange"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/IpRange/RefreshIPv6HighsAndLows": {
-      "get": {
-        "tags": [
-          "IpRange"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
@@ -488,6 +431,22 @@
         "type": "object",
         "properties": {
           "countryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCodeIso2": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCodeIso3": {
+            "type": "string",
+            "nullable": true
+          },
+          "startIp": {
+            "type": "string",
+            "nullable": true
+          },
+          "endIp": {
             "type": "string",
             "nullable": true
           }
@@ -559,20 +518,14 @@
         },
         "additionalProperties": false
       },
-      "ImportViewModel": {
+      "ImportResultModel": {
         "type": "object",
         "properties": {
-          "file": {
-            "type": "string",
-            "format": "binary",
-            "nullable": true
-          },
-          "resultMessage": {
-            "type": "string",
-            "nullable": true
-          },
           "success": {
-            "type": "boolean",
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
             "nullable": true
           },
           "processedCount": {

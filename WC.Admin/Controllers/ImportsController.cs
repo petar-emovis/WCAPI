@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WC.Admin.ApiClient;
-using WC.Admin.Models;
 using WC.Models.Admin.Import;
 using WC.Service;
 
@@ -22,12 +21,12 @@ namespace WC.Admin.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return View(new ImportPageViewModel());
+            return View(new ImportViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(ImportPageViewModel vm)
+        public async Task<IActionResult> Index(ImportViewModel vm)
         {
             if (vm.File == null || vm.File.Length == 0)
             {
@@ -43,7 +42,7 @@ namespace WC.Admin.Controllers
             content.Add(new StreamContent(stream), "file", vm.File.FileName);
 
             var response = await client.PostAsync("/Imports", content);
-            var result = await response.Content.ReadFromJsonAsync<ImportResultModel>();
+            var result = await response.Content.ReadFromJsonAsync<ApiClient.ImportResultModel>();
 
             vm.Success = result?.Success ?? false;
             vm.ResultMessage = result?.Message;

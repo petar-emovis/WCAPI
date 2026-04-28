@@ -16,7 +16,7 @@ namespace WC.Service
     {
         Task<string> RefreshIpIntegersBinariesAndVersions();
         Task<string> RefreshIPv6HighsAndLows();
-        Task<CountryResponse> GetCountryFromIpAdress(IpRangeRequest ipAddress);
+        Task<CountryResponse> GetCountryFromIpAddress(IpRangeRequest ipAddress);
 
 
         Task<IpRangePagedResultModel> GetIpRangesAsync(IpRangeFilterModel filter);
