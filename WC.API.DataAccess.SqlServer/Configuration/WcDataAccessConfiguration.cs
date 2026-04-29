@@ -12,8 +12,8 @@ namespace WC.DataAccess.SqlServer.Configuration
 
         public WcDataAccessConfiguration(IConfiguration configuration)
         {
-            ConnectionString = configuration["WC.DataAccess:WC_Test:ConnectionString"];
-            Timeout = Convert.ToInt32(configuration["WC.DataAccess:WC_Test:TimeoutInSeconds"]);
+            ConnectionString = configuration["WC.DataAccess:WC_Production:ConnectionString"];
+            Timeout = Convert.ToInt32(configuration["WC.DataAccess:WC_Production:TimeoutInSeconds"]);
 
             var validationResults = new List<ValidationResult>();
             if (!Validator.TryValidateObject(this, new ValidationContext(this), validationResults, true))
