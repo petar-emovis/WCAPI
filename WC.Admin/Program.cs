@@ -30,7 +30,7 @@ builder.Services.AddTransient<WcApiClient>(sp =>
     return new WcApiClient(baseUrl, httpClient);
 });
 
-builder.Services.AddScoped<IWcManagementService, WcManagementService>();
+//builder.Services.AddScoped<IWcManagementService, WcManagementService>();
 //builder.Services.AddAutoMapper(typeof(WhichCountryContext).Assembly);
 builder.Services.AddAutoMapper(cfg => { }, typeof(WhichCountryContext).Assembly);
 
