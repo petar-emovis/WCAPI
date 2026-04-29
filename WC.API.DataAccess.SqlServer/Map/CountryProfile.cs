@@ -4,9 +4,9 @@ using Entities = WC.DataAccess.SqlServer.Models;
 
 namespace WC.DataAccess.SqlServer.Map
 {
-    public class CountryProfiel : Profile
+    public class CountryProfile : Profile
     {
-        public CountryProfiel()
+        public CountryProfile()
         {
             CreateMap<Entities.Country, DTO.Country>();
 
