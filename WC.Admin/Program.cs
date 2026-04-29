@@ -32,7 +32,7 @@ builder.Services.AddTransient<WcApiClient>(sp =>
 
 //builder.Services.AddScoped<IWcManagementService, WcManagementService>();
 //builder.Services.AddAutoMapper(typeof(WhichCountryContext).Assembly);
-builder.Services.AddAutoMapper(cfg => { }, typeof(WhichCountryContext).Assembly);
+//builder.Services.AddAutoMapper(cfg => { }, typeof(WhichCountryContext).Assembly);
 
 var app = builder.Build();
 
