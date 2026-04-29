@@ -26,14 +26,13 @@ namespace WC.API.Controllers
         public async Task<ActionResult<List<CountryViewModel>>> GetAll()
             => Ok(await _wcManagementService.GetCountryListAsync());
 
-        [DisplayName("SearchCountries")]
-        [HttpGet("{search}", Name = "GetCountriesFiltered")]
+        [HttpGet(Name = "GetCountriesFiltered")]
         //[HttpGet(Name = "GetCountriesFiltered")]
-        public async Task<ActionResult<List<CountryViewModel>>> GetCountriesFiltered(string? search)
+        public async Task<ActionResult<List<CountryViewModel>>> GetCountriesFiltered([FromQuery] string? search)
             => Ok(await _wcManagementService.GetCountryListAsync(search));
 
 
-        [HttpGet("[action]", Name = "GetCountryFromIpAddress")]
+        [HttpGet(Name = "GetCountryFromIpAddress")]
         public async Task<CountryResponse> GetCountryFromIpAddress(string ipAddress)
         {
             return await _wcManagementService.GetCountryFromIpAddress(new IpRangeRequest { IpAddress = ipAddress });
